@@ -1,0 +1,7 @@
+{
+  "name": "lifesync",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
