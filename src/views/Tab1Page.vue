@@ -13,11 +13,22 @@
       </ion-header>
 
       <ExploreContainer name="Tab 1 page" />
+      <div class="bg-red-400 flex justify-between"><div>
+        Hey may name is 
+      </div>
+      <div>maya</div></div>
+      
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
-import ExploreContainer from '@/components/ExploreContainer.vue';
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+} from "@ionic/vue";
+import ExploreContainer from "@/components/ExploreContainer.vue";
 </script>
