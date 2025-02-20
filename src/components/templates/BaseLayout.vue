@@ -1,10 +1,12 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar
+    <ion-header >
+      <ion-toolbar v-if="title"
         ><ion-title> {{ title }} <slot name="titleHeader"></slot></ion-title
       ></ion-toolbar>
+      <slot name="header"></slot>
     </ion-header>
+    
     <ion-content class="ion-padding">
       <slot name="content"></slot>
     </ion-content>
@@ -24,6 +26,7 @@ import {
   IonToolbar,
   IonFooter,
   IonPage,
+  IonInput
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 
@@ -35,6 +38,7 @@ export default defineComponent({
     IonToolbar,
     IonFooter,
     IonPage,
+    IonInput
   },
   props: {
     title: {

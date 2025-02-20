@@ -1,23 +1,7 @@
 @import "tailwindcss";
 
-@layer theme {
-  :root {
-    --spacing: 0.25rem;
-  }
-}
+@layer components {   
+ 
 
-@layer components {
-   
-}
 
-@layer utilities {
-  .mt-8 {
-    margin-top: calc(var(--spacing) * 8);
-  }
-  .w-17 {
-    width: calc(var(--spacing) * 17);
-  }
-  .pr-29 {
-    padding-right: calc(var(--spacing) * 29);
-  }
 }

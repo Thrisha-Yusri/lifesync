@@ -4,12 +4,20 @@ import TabsPage from '../views/TabsPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
+    path: '/a',
     redirect: '/tabs/tab1'
+  },
+  {
+    path: '/',
+    component: () => import('@/views/Home.vue')
   },
   {
     path: '/playground',
     component: () => import('@/views/Playground.vue')
+  },
+  {
+    path: '/signup',
+    component: () => import('@/views/Signup.vue')
   },
   {
     path: '/tabs/',
@@ -21,7 +29,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'tab1',
-        component: () => import('@/views/Tab1Page.vue')
+        component: () => import('@/views/Signup.vue')
       },
       {
         path: 'tab2',
