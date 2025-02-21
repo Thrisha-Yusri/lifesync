@@ -13,6 +13,7 @@
           <CustomCalendar />
         </template>
       </CustomCard>
+
       <div class="py-6">
         <div class="flex justify-between items-center pr-2 pb-4">
           <div class="pb-3 font-bold">Folders</div>
@@ -34,6 +35,7 @@
           >
         </div>
       </div>
+
     </template>
   </BaseLayout>
 </template>
@@ -56,6 +58,7 @@ export default defineComponent({
     IonButton,
     CustomCalendar,
   },
+
   data() {
     return {
       logoIonic,
@@ -66,3 +69,5 @@ export default defineComponent({
   },
 });
 </script>
+
+

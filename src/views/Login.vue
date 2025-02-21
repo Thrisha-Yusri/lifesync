@@ -14,10 +14,6 @@
         <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-6 mt-6">
           <ion-list class="mt-4">
             <ion-item>
-              <ion-input label="Full Name" placeholder="Enter your name"></ion-input>
-            </ion-item>
-
-            <ion-item>
               <ion-input label="Email" type="email" placeholder="email@domain.com"></ion-input>
             </ion-item>
 
@@ -25,7 +21,7 @@
               <ion-input label="Password" type="password" placeholder="********"></ion-input>
             </ion-item>
 
-            <ion-button expand="full" class="mt-4" shape="round">Sign Up</ion-button>
+            <ion-button expand="full" class="mt-4" shape="round">Log In</ion-button>
           </ion-list>
         </div>
       </div>

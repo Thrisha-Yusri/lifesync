@@ -20,6 +20,10 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Signup.vue')
   },
   {
+    path: '/login',
+    component: () => import('@/views/Login.vue')
+  },
+  {
     path: '/tabs/',
     component: TabsPage,
     children: [
@@ -33,7 +37,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'tab2',
-        component: () => import('@/views/Tab2Page.vue')
+        component: () => import('@/views/Login.vue')
       },
       {
         path: 'tab3',
