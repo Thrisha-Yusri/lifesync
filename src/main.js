@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
+import ToastPlugin from "@/plugins/toast"; // Import the toast plugin
 
 import { IonicVue } from '@ionic/vue';
 
@@ -37,7 +38,8 @@ import './index.css';
 
 const app = createApp(App)
   .use(IonicVue, { mode: "ios"})
-  .use(router);
+  .use(router)
+  .use(ToastPlugin);
 
 router.isReady().then(() => {
   app.mount('#app');

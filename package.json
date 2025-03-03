@@ -26,11 +26,13 @@
     "@schedule-x/theme-default": "^2.19.0",
     "@schedule-x/vue": "^2.17.0",
     "@tailwindcss/vite": "^4.0.3",
-    "firebase": "^11.2.0",
+    "firebase": "^11.3.1",
     "ionicons": "^7.4.0",
     "qalendar": "^3.9.0",
-    "vue": "^3.3.0",
-    "vue-router": "^4.2.0"
+    "vue": "^3.5.13",
+    "vue-router": "^4.2.0",
+    "vuex": "^4.1.0",
+    "vuexfire": "^3.2.5"
   },
   "devDependencies": {
     "@capacitor/cli": "7.0.1",
