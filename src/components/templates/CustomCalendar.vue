@@ -32,13 +32,22 @@ export default {
           isEditable: true,
           id: "5602b6f589fc",
         },
+        {
+          title: "swc test",
+          with: "scoups",
+          time: { start: "2025-03-23 10:05", end: "2025-03-23 12:05" },
+          color: "purple",
+          isEditable: true,
+          id: "gyrya5yd5aaa",
+          description:
+            "adadadadadadadadadd"}
       ],
       config: {
         defaultMode: "month", 
         week: {
           startDay: "monday",
         },
-        isDark: false, 
+        isDark: false,
       },
     };
   },

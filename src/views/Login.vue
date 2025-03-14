@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <!-- Main Content -->
-    <ion-content :fullscreen="true" class="p-0 flex flex-col">
+    <!-- <ion-content :fullscreen="true" class="p-0 flex flex-col"> -->
       <!-- Top Section: Titles & Gradient Background -->
       <div
         class="h-[100vh] w-full flex flex-col items-center justify-center px-6 bg-cover bg-center"
@@ -57,11 +57,15 @@
                 @click="login()"
                 >Log In</ion-button
               >
+
+              <div class="text-center text-sm mt-4 text-gray-500">
+                Don't have an account? <span class="border-b" @click="$router.push('/signup')">Register Here!</span>
+              </div>
             </ion-list>
           </div>
         </form>
       </div>
-    </ion-content>
+    <!-- </ion-content> -->
   </ion-page>
 </template>
 

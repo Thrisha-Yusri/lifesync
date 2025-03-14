@@ -10,47 +10,88 @@
       <ion-card class="ion-padding">
         <!-- Card Header -->
         <ion-card-header class="center-header">
-  <ion-card-title class="card-title text-lg p-4">Add Reminder</ion-card-title>
-</ion-card-header>
-
+          <ion-card-title class="card-title text-lg p-4"
+            >Event Details</ion-card-title
+          >
+        </ion-card-header>
 
         <ion-card-content>
           <!-- Reminder Title Input -->
           <div class="mb-4">
-          <ion-input
-            class="block w-full p-2"
-            label="Title"
-            label-placement="floating"
-            placeholder="Enter text"
-          ></ion-input>
-        </div>
+            <ion-input
+              class="block w-full p-2"
+              label="Title"
+              placeholder="Enter title"
+              label-placement="floating"
+              v-model="dataObj.title"
+            ></ion-input>
+          </div>
 
           <div class="mb-4">
-          <ion-label position="floating">Description</ion-label>
-          <ion-textarea
-            autoGrow
-            placeholder="Enter description"
-            rows="10"
-            class="border p-3 w-full rounded-lg shadow-xs"
-          ></ion-textarea>
-        </div>
+            <ion-input
+              class="block w-full p-2"
+              label="With"
+              placeholder="Enter name"
+              label-placement="floating"
+              v-model="dataObj.with"
+            ></ion-input>
+          </div>
+          <div class="mb-4">
+            <ion-input
+              class="block w-full p-2"
+              label="Location"
+              placeholder="Enter location"
+              label-placement="floating"
+              v-model="dataObj.location"
+            ></ion-input>
+          </div>
 
-          <!-- Combined Date and Time Picker -->
-          <ion-card-title class="text-lg p-5"
-            >Select Date & Time</ion-card-title
-          >
-          <ion-item>
-            <ion-datetime
-              display-format="MMM DD, YYYY h:mm A"
-              placeholder="Select Date and Time"
-            ></ion-datetime>
-          </ion-item>
+          <div class="mb-4">
+            <ion-textarea
+              autoGrow
+              label="Description"
+              label-placement="floating"
+              placeholder="Enter description"
+              rows="10"
+              v-model="dataObj.description"
+            ></ion-textarea>
+          </div>
+
+          <div class="border border-gray-300 rounded-lg px-4 py-2 mb-4">
+            <div class="text-gray-500 pb-2 text-xs">Start Date & Time</div>
+            <ion-datetime-button datetime="datetime1"></ion-datetime-button>
+            <ion-modal :keep-contents-mounted="true">
+              <ion-datetime
+                id="datetime1"
+                v-model="dataObj.time.start"
+              ></ion-datetime>
+            </ion-modal>
+          </div>
+
+          <div class="border border-gray-300 rounded-lg px-4 py-2">
+            <div class="text-gray-500 pb-2 text-xs">End Date & Time</div>
+            <ion-datetime-button datetime="datetime2"></ion-datetime-button>
+            <ion-modal :keep-contents-mounted="true">
+              <ion-datetime
+                id="datetime2"
+                v-model="dataObj.time.end"
+              ></ion-datetime>
+            </ion-modal>
+          </div>
 
           <div class="flex justify-between mt-4">
-            <ion-button fill="solid" color="danger" class="flex-1 mx-1"
+            <ion-button
+              fill="solid"
+              color="danger"
+              class="flex-1 mx-1"
+              @click="cancelReminder()"
               >Cancel</ion-button
             >
-            <ion-button fill="solid" color="primary" class="flex-1 mx-1"
+            <ion-button
+              fill="solid"
+              color="primary"
+              class="flex-1 mx-1"
+              @click="saverReminder()"
               >Save</ion-button
             >
           </div>
@@ -60,8 +101,14 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script>
+import db from "@/firebase/init.js";
+import { collection, addDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import {
+  IonDatetimeButton,
+  IonModal,
+  IonTextarea,
   IonPage,
   IonHeader,
   IonToolbar,
@@ -81,10 +128,12 @@ import {
   IonCol,
   IonIcon,
 } from "@ionic/vue";
-import { calendar } from "ionicons/icons";
 
 export default {
   components: {
+    IonDatetimeButton,
+    IonModal,
+    IonTextarea,
     IonPage,
     IonHeader,
     IonToolbar,
@@ -104,15 +153,45 @@ export default {
     IonCol,
     IonIcon,
   },
-  setup() {
-    return { calendar };
+
+  data() {
+    return {
+      dataObj: {
+        title: "",
+        with: "",
+        description: "",
+        time: {
+          start: new Date().toISOString(),
+          end: new Date().toISOString(),
+        },
+        location: "",
+      },
+    };
   },
+
   methods: {
-    cancel() {
+    cancelReminder() {
       console.log("Cancelled");
     },
-    save() {
-      console.log("Saved");
+    async saverReminder() {
+      try {
+        const auth = getAuth();
+        let user = JSON.parse(localStorage.getItem("user"));
+
+        let data = {
+          ...this.dataObj,
+          userId: user.uid,
+        };
+
+        const colRef = collection(db, "events");
+        const docRef = await addDoc(colRef, data);
+
+        this.$toast("Successfully created!", 3000, "success");
+        this.$router.push("/home");
+      } catch (error) {
+        console.log(error);
+        this.$toast("Error!", 3000, "danger");
+      }
     },
   },
 };

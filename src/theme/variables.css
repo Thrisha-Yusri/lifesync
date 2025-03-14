@@ -98,7 +98,8 @@ http://ionicframework.com/docs/theming/ */
 }
 
 /* custom css ios*/
-.ios ion-input {
+.ios ion-input,
+ion-textarea {
   --border-color: rgb(209, 206, 206) !important; /* Border color */
   --border-width: 1px !important; /* Border width */
   border: var(--border-width) solid var(--border-color) !important;
