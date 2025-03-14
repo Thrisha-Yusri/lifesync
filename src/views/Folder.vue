@@ -1,132 +1,172 @@
 <template>
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>To-Do List</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-page>
+    <BaseLayout
+      ><template #header>
+        <ion-toolbar color="primary">
+          <ion-title class="text-l">Folders</ion-title>
+        </ion-toolbar>
+      </template>
 
-  <ion-content color="light">
-    <ion-card class="ion-padding">
-      <ion-card-header>
-        <ion-card-title class="card-title">Create New Folder</ion-card-title>
-      </ion-card-header>
+      <template #content>
+        <ion-content class="ion-padding">
+          <!-- Header Section: Folders title on the left, Add button on the right -->
+          <div class="flex justify-between items-center p-4">
+            <ion-card-title class="card-title text-left"
+              >Folders</ion-card-title
+            >
+            <ion-button @click="addfolder()">
+              <ion-icon :icon="addOutline" style="color: white"></ion-icon> Add
+              Folder
+            </ion-button>
+          </div>
 
-      <ion-card-content>
-        <ion-item>
-          <ion-input label="Title" label-placement="floating" placeholder="Enter text"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-textarea label="Description" label-placement="floating" placeholder="Enter description"
-            auto-grow></ion-textarea>
-        </ion-item>
-        <ion-item>
-          <ion-label>Upload Files</ion-label>
-          <ion-button @click="openFilePicker" color="primary">
-            Choose File
-          </ion-button>
-          <input type="file" multiple ref="fileInput" hidden @change="handleFileUpload" />
-        </ion-item>
-        <ion-item>
-          <ion-input label="Add Link" label-placement="floating" placeholder="Enter link"></ion-input>
-        </ion-item>
-        <ion-item>
-        <ion-input label="Add Collaborators" label-placement="floating" placeholder="Enter Collaborators"></ion-input>
-      </ion-item>
+          <!-- Folder List -->
+          <ion-grid>
+            <ion-row class="gap-4">
+              <ion-col v-for="folder in folders" :key="folder.id" size="auto">
+                <div
+                  class="relative w-35 h-33 bg-stone-400 rounded-lg shadow-md p-6"
+                
+                >
+                  <div
+                    class="absolute top-0 left-4 w-12 h-4 bg-stone-200 rounded-b-lg"
+                  ></div>
+                  <p class="text-center text-black font-medium text-lg mt-6">
+                    {{ folder.title }}
+                  </p>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-content>
+      </template>
 
-        <!-- Buttons Section -->
-        <div class="flex justify-end mt-4 space-x-2">
-          <ion-button color="danger">Cancel</ion-button>
-          <ion-button color="primary" >Add</ion-button>
-        </div>
-      </ion-card-content>
-    </ion-card>
-  </ion-content>
+      <template #footer>
+        <ion-tabs>
+          <ion-router-outlet></ion-router-outlet>
+          <ion-tab-bar slot="bottom">
+            <ion-tab-button tab="home" href="/home">
+              <ion-icon :icon="home" />
+              <ion-label>Home</ion-label>
+            </ion-tab-button>
+
+            <ion-tab-button tab="folder" href="/folder">
+              <ion-icon :icon="folderOpen" />
+              <ion-label>Folder</ion-label>
+            </ion-tab-button>
+
+            <ion-tab-button tab="tasks" href="/tasks">
+              <ion-icon :icon="list" />
+              <ion-label>Notes</ion-label>
+            </ion-tab-button>
+
+            <ion-tab-button tab="profile" href="/profile">
+              <ion-icon :icon="person" />
+              <ion-label>Profile</ion-label>
+            </ion-tab-button>
+          </ion-tab-bar>
+        </ion-tabs>
+      </template></BaseLayout
+    >
+  </ion-page>
 </template>
 
-<script lang="ts">
+<script>
+import { defineComponent, ref } from "vue";
 import {
-  IonCheckbox,
-  IonContent,
+  IonRouterOutlet,
+  IonLabel,
+  IonTabButton,
+  IonTabBar,
+  IonTabs,
+  IonPage,
   IonHeader,
-  IonInput,
-  IonItem,
-  IonList,
-  IonTitle,
   IonToolbar,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
+  IonTitle,
+  IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
   IonButton,
-} from '@ionic/vue';
-import { defineComponent, ref } from 'vue';
+  IonIcon,
+  IonCardTitle,
+} from "@ionic/vue";
+
+import { addOutline, home, folderOpen, list, person } from "ionicons/icons";
+import BaseLayout from "@/components/templates/BaseLayout.vue";
 
 export default defineComponent({
   components: {
-    IonCheckbox,
-    IonContent,
+    IonRouterOutlet,
+    IonLabel,
+    IonTabButton,
+    IonTabBar,
+    IonTabs,
+    IonPage,
     IonHeader,
-    IonInput,
-    IonItem,
-    IonList,
-    IonTitle,
     IonToolbar,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
+    IonTitle,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
     IonButton,
+    IonIcon,
+    IonCardTitle,
+    BaseLayout,
   },
   setup() {
-    const tasks = ref([
-      "Get eggs",
-      "Get milk",
-      "Take out compost",
-      "Pick up dry cleaning",
-      "Call mom",
-      "Order more dog food",
-      "Think of new tasks for this demo"
+    const folders = ref([
+      { id: 1, title: "Folder 1" },
+      { id: 2, title: "Folder 2" },
+      { id: 3, title: "Folder 3" },
+      { id: 4, title: "Folder 4" },
+      { id: 5, title: "Folder 5" },
+      { id: 6, title: "Folder 6" },
     ]);
 
-    const cancel = () => {
-      console.log("Cancelled");
+    return {
+      folders,
+      addOutline,
+      home,
+      folderOpen,
+      list,
+      person,
     };
+  },
 
-    const addTask = () => {
-      console.log("Added new task");
-    };
-
-    return { tasks, cancel, addTask };
-  }
+  methods: {
+    addfolder() {
+      this.$router.push("/folderform");
+    },
+  },
 });
 </script>
 
 <style scoped>
-/* Add spacing and styling for the card */
-ion-card {
-  margin: 20px;
-  border-radius: 12px;
+/* Folder box */
+.bg-gray-200 {
+  background-color: #e5e7eb; /* Light gray */
+  transition: transform 0.2s ease-in-out;
 }
 
-/* Title styling */
-.card-title {
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 10px;
+/* Folder hover effect */
+.bg-gray-200:hover {
+  transform: scale(1.05);
 }
 
-/* Improve spacing inside the list */
-ion-item {
-  --inner-padding-start: 10px;
-  --inner-padding-end: 10px;
+/* Folder tab */
+.bg-gray-300 {
+  background-color: #d1d5db; /* Slightly darker gray */
 }
 
-/* Button container styling */
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
+/* Text styling */
+.text-black {
+  color: black;
 }
 
+/* Adjust row gap */
+.gap-4 {
+  gap: 16px;
+}
 </style>

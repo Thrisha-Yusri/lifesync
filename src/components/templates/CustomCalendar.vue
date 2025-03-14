@@ -14,7 +14,6 @@ export default {
   data() {
     return {
       events: [
-        // ...
         {
           title: "Advanced algebra",
           with: "Chandler Bing",
@@ -33,10 +32,13 @@ export default {
           isEditable: true,
           id: "5602b6f589fc",
         },
-        // ...
       ],
       config: {
-        // see configuration section
+        defaultMode: "month", 
+        week: {
+          startDay: "monday",
+        },
+        isDark: false, 
       },
     };
   },

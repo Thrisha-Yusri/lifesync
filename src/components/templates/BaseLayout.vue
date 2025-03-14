@@ -12,7 +12,6 @@
     </ion-content>
     <ion-footer>
       <ion-toolbar>
-        <ion-title>Footer</ion-title>
         <slot name="footer"></slot>
       </ion-toolbar>
     </ion-footer>
