@@ -9,6 +9,9 @@
       </template>
 
       <template #content>
+        <div class="font-bold font"> 
+          Hello, {{ userData?.name }}
+        </div>
         <ion-searchbar></ion-searchbar>
         <!-- Calendar Section -->
         <CustomCard title="Calendar">
@@ -21,7 +24,7 @@
             ></ion-icon>
           </template>
           <template #content>
-            <CustomCalendar />
+            <CustomCalendar :events="events" />
           </template>
         </CustomCard>
 
@@ -29,8 +32,11 @@
         <div class="py-6">
           <div class="flex justify-between items-center pr-2 pb-4">
             <div class="pb-2 font-bold">Folders</div>
-            <ion-button class="h-8 px-3 text-sm flex items-center space-x-2"@click="addfolder()">
-              <ion-icon :icon="add" style="color: white" ></ion-icon>
+            <ion-button
+              class="h-8 px-3 text-sm flex items-center space-x-2"
+              @click="addfolder()"
+            >
+              <ion-icon :icon="add" style="color: white"></ion-icon>
               <span class="font-medium">Add Folder</span>
             </ion-button>
           </div>
@@ -106,6 +112,9 @@ import { add, home, folderOpen, list, person } from "ionicons/icons";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import CustomCard from "@/components/templates/CustomCard.vue";
 import CustomCalendar from "@/components/templates/CustomCalendar.vue";
+import db from "@/firebase/init.js";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 export default defineComponent({
   name: "Home",
@@ -129,52 +138,103 @@ export default defineComponent({
     IonSearchbar,
   },
 
-  setup() {
-    const isAddFolderModalOpen = ref(false);
-    const folders = ref([]);
-    const newFolder = ref({
-      title: "",
-      description: "",
-      files: [],
-      link: "",
-      friends: "",
-    });
+//run everytime this page is open
+  ionViewDidEnter() {
+    this.getEvents();
+    this.userData = JSON.parse(localStorage.getItem("user"))
+    
+  },
 
-    const openAddFolderModal = () => {
-      isAddFolderModalOpen.value = true;
-    };
-
-    const closeAddFolderModal = () => {
-      isAddFolderModalOpen.value = false;
-      newFolder.value = {
-        title: "",
-        description: "",
-        files: [],
-        link: "",
-        friends: "",
-      };
-    };
-
+  data() {
     return {
       add,
       home,
       folderOpen,
       list,
       person,
-      isAddFolderModalOpen,
-      folders,
-      newFolder,
-      openAddFolderModal,
-      closeAddFolderModal,
+      isAddFolderModalOpen: false,
+      folders: [],
+      newFolder: {
+        title: "",
+        description: "",
+        files: [],
+        link: "",
+        friends: "",
+      },
+      events: [],
+      userData:null,
     };
   },
 
+
+
   methods: {
+    openAddFolderModal() {
+      this.isAddFolderModalOpen = true;
+    },
+    closeAddFolderModal() {
+      this.isAddFolderModalOpen = false;
+      this.newFolder = {
+        title: "",
+        description: "",
+        files: [],
+        link: "",
+        friends: "",
+      };
+    },
     reminder() {
       this.$router.push("/reminder");
     },
     addfolder() {
       this.$router.push("/folderform");
+    },
+    async getEvents() {
+      //inistialize firebase authentication
+      const auth = getAuth();
+      //get the user from local storage
+      let user = JSON.parse(localStorage.getItem("user"));
+      //get the events from the database
+      const queryRef = query(
+        //get the collection of events
+        collection(db, "events"),
+        //get the events where the userId is equal to the user id
+        where("userId", "==", user.uid)
+      );
+
+      //get the documents from the query
+      const docSnap = await getDocs(queryRef);
+
+      //if the document is not empty
+      if (!docSnap.empty) {
+        //map the documents to the data
+        let result = [];
+        //get the data from the documents
+        result = docSnap.docs.map((doc) => doc.data());
+
+        const updatedData = result.map((item, index) => ({
+          ...item,
+          id:index,
+          time: {
+            start: this.formatDate(item.time.start),
+            end: this.formatDate(item.time.end),
+          },
+        }));
+        //set the events to the result
+        this.events = updatedData;
+      } else {
+        console.log("No such document!");
+      }
+    },
+
+    formatDate(isoString) {
+      const date = new Date(isoString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
     },
   },
 });
