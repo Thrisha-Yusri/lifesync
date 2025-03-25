@@ -3,100 +3,118 @@
     <BaseLayout>
       <template #header
         ><ion-toolbar color="primary">
-          <ion-title class="text-l">Folder</ion-title>
+          <ion-title class="text-xl">Folder</ion-title>
         </ion-toolbar></template
       >
 
-      <template #content
-        >
-          <ion-card class="ion-padding">
-            <ion-card-header>
-              <ion-card-title class="card-title text-lg font-bold p-4"
-                >Create New Folder</ion-card-title
+      <template #content>
+        <ion-card class="ion-padding">
+          <ion-card-header>
+            <ion-card-title class="card-title text-lg font-bold p-4"
+              >Create New Folder</ion-card-title
+            >
+          </ion-card-header>
+
+          <ion-card-content>
+            <!-- Title Input -->
+            <div class="mb-4">
+              <ion-input
+                class="block w-full p-2"
+                label="Title"
+                label-placement="floating"
+                placeholder="Enter Title"
+              ></ion-input>
+            </div>
+
+            <!-- Description Input -->
+            <div class="mb-4">
+              <ion-textarea
+                autoGrow
+                label="Description"
+                label-placement="floating"
+                placeholder="Enter Description"
+                rows="10"
+              ></ion-textarea>
+            </div>
+
+            <!-- Upload Files -->
+
+            <div class="mb-4">
+              <ion-label class="block font-medium mb-2">Upload Files</ion-label>
+              <ion-button @click="openFilePicker" color="primary"
+                >Choose File</ion-button
               >
-            </ion-card-header>
+              <input
+                type="file"
+                multiple
+                ref="fileInput"
+                hidden
+                @change="handleFileUpload"
+              />
+            </div>
 
-            <ion-card-content>
-              <!-- Title Input -->
-              <div class="mb-4">
-                <ion-input
-                  class="block w-full p-2"
-                  label="Title"
-                  label-placement="floating"
-                  placeholder="Enter text"
-                ></ion-input>
-              </div>
-
-              <!-- Description Input -->
-              <div class="mb-4">
-                <ion-label position="floating">Description</ion-label>
-                <ion-textarea
-                  autoGrow
-                  placeholder="Enter description"
-                  rows="10"
-                  class="border p-3 w-full rounded-lg shadow-xs"
-                ></ion-textarea>
-              </div>
-
-              <!-- Upload Files -->
-              <div class="mb-4">
-                <ion-label class="block font-medium mb-2"
-                  >Upload Files</ion-label
-                >
-                <ion-button @click="openFilePicker" color="primary"
-                  >Choose File</ion-button
-                >
-                <input
-                  type="file"
-                  multiple
-                  ref="fileInput"
-                  hidden
-                  @change="handleFileUpload"
+            <!-- File Preview as a List -->
+            <ion-list
+              v-if="selectedFiles.length > 0"
+              class="bg-white rounded-md shadow p-3"
+            >
+              <ion-item
+                v-for="(file, index) in selectedFiles"
+                :key="index"
+                lines="full"
+                class="file-item"
+              >
+                <ion-label class="truncate text-base">{{
+                  file.name
+                }}</ion-label>
+                <ion-icon
+                  :icon="trash"
+                  color="danger"
+                  class="trash-icon"
+                  @click="removeFile(index)"
                 />
-              </div>
+              </ion-item>
+            </ion-list>
 
-              <!-- File Preview as a List -->
-              <ion-list
-                v-if="selectedFiles.length > 0"
-                class="bg-white rounded-md shadow p-3"
+            <!-- Add Link -->
+            <div class="mt-4">
+              <ion-input
+                class="block w-full p-5"
+                label="Add Link"
+                label-placement="floating"
+                placeholder="Enter link"
+              ></ion-input>
+            </div>
+
+            <!-- Add Collaborators -->
+            <div class="mt-4">
+              <ion-input
+                class="block w-full p-2"
+                label="Add Collaborators"
+                label-placement="floating"
+                placeholder="Enter Collaborators"
+              ></ion-input>
+            </div>
+
+            <!-- Buttons Section -->
+            <div class="flex justify-between mt-4">
+              <ion-button
+                fill="solid"
+                color="danger"
+                class="flex-1 mx-1"
+                @click="cancelNotes()"
+                >Cancel</ion-button
               >
-                <ion-item v-for="(file, index) in selectedFiles" :key="index">
-                  <ion-icon
-                    name="document-text-outline"
-                    class="text-primary mr-2"
-                  ></ion-icon>
-                  <ion-label>{{ file.name }}</ion-label>
-                </ion-item>
-              </ion-list>
-
-              <!-- Add Link -->
-              <div class="mt-4">
-                <ion-input
-                  class="block w-full p-5"
-                  label="Add Link"
-                  label-placement="floating"
-                  placeholder="Enter link"
-                ></ion-input>
-              </div>
-
-              <!-- Add Collaborators -->
-              <div class="mt-4">
-                <ion-input
-                  class="block w-full p-2"
-                  label="Add Collaborators"
-                  label-placement="floating"
-                  placeholder="Enter Collaborators"
-                ></ion-input>
-              </div>
-
-              <!-- Buttons Section -->
-              <div class="flex justify-end mt-6 space-x-2">
-                <ion-button color="danger">Cancel</ion-button>
-                <ion-button color="primary">Add</ion-button>
-              </div>
-            </ion-card-content>
-          </ion-card>
-        
+              <ion-button
+                fill="solid"
+                color="primary"
+                class="flex-1 mx-1"
+                @click="saverNotes()"
+                >Save</ion-button
+              >
+            </div>
+          </ion-card-content>
+        </ion-card>
       </template>
     </BaseLayout>
   </ion-page>
@@ -107,7 +125,7 @@ import BaseLayout from "@/components/templates/BaseLayout.vue";
 import {
   IonList,
   IonIcon,
-IonPage,
+  IonPage,
   IonHeader,
   IonInput,
   IonItem,
@@ -122,12 +140,13 @@ IonPage,
   IonTextarea,
 } from "@ionic/vue";
 import { defineComponent, ref } from "vue";
+import { trash } from "ionicons/icons";
 
 export default defineComponent({
   components: {
     IonIcon,
-IonPage,
-IonList,
+    IonPage,
+    IonList,
     IonHeader,
     IonInput,
     IonItem,
@@ -165,7 +184,20 @@ IonList,
       }
     };
 
-    return { fileInput, openFilePicker, handleFileUpload, selectedFiles };
+    // Remove file from list
+    const removeFile = (index) => {
+      selectedFiles.value.splice(index, 1);
+      console.log("File removed:", selectedFiles.value);
+    };
+
+    return {
+      fileInput,
+      openFilePicker,
+      handleFileUpload,
+      selectedFiles,
+      removeFile,
+      trash,
+    };
   },
 });
 </script>
@@ -196,5 +228,25 @@ ion-item {
   display: flex;
   justify-content: space-between;
   margin-top: 15px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  min-height: 50px; /* Ensures all items have the same height */
+  padding: 10px;
+}
+
+.trash-icon {
+  font-size: 24px; /* Makes sure all trash icons are the same size */
+  cursor: pointer;
+  margin-left: auto; /* Pushes the trash icon to the right */
+}
+
+ion-label {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

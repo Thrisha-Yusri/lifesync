@@ -1,8 +1,8 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="primary">
-        <ion-title class="text-l">Reminder</ion-title>
+      <ion-toolbar color="light">
+        <ion-title class="text-xl">Reminder</ion-title>
       </ion-toolbar>
     </ion-header>
 

@@ -66,7 +66,7 @@ http://ionicframework.com/docs/theming/ */
   /** Border **/
   --ion-border-radius: 8px;
 
-  --ion-tab-bar-background: rgb(249 250 251);
+  --ion-tab-bar-background: rgb(246, 246, 246);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -139,4 +139,26 @@ html, body {
 .ios ion-button.clean-button {
   --padding-start: 0;
   --padding-end: 0;
+  
 }
+
+/* Apply a Transparent Background Image */
+html, body, ion-content {
+  --ion-background-color: transparent !important;
+  position: relative;
+}
+
+/* Background overlay for the entire page */
+.background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/assets/background_image.jpg') no-repeat center center/cover;
+  opacity: 0.3; /* Adjust for transparency */
+  z-index: -1; /* Ensures it stays behind all elements */
+}
+
+
+

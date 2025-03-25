@@ -2,34 +2,45 @@
   <ion-page>
     <BaseLayout
       ><template #header>
-        <ion-toolbar color="primary">
-          <ion-title class="text-l">Folders</ion-title>
+        <ion-toolbar color="light">
+          <ion-button
+           
+            shape="round"
+            fill="clear"
+            @click="goBack"
+            class="ml-2"
+          >
+            <ion-icon slot="icon-only" :icon="arrowBack"></ion-icon>
+          </ion-button>
+
+          <ion-title class="text-xl">Life Sync</ion-title>
         </ion-toolbar>
       </template>
 
       <template #content>
         <ion-content class="ion-padding">
           <!-- Header Section: Folders title on the left, Add button on the right -->
-          <div class="flex justify-between items-center p-4">
-            <ion-card-title class="card-title text-left"
-              >Folders</ion-card-title
+          <div class="flex justify-between items-center pb-6">
+          <ion-card-title class="card-title text-left text-l">Folders</ion-card-title>
+          <ion-button
+              class="h-8 px-3 text-sm flex items-center space-x-2"
+              @click="addfolder()"
             >
-            <ion-button @click="addfolder()">
-              <ion-icon :icon="addOutline" style="color: white"></ion-icon> Add
-              Folder
+              <ion-icon :icon="add" style="color: white"></ion-icon>
+        
             </ion-button>
-          </div>
+        </div>
 
           <!-- Folder List -->
           <ion-grid>
             <ion-row class="gap-4">
               <ion-col v-for="folder in folders" :key="folder.id" size="auto">
                 <div
-                  class="relative w-35 h-33 bg-stone-400 rounded-lg shadow-md p-6"
+                  class=" relative w-38 h-30 bg-gray-400 rounded-lg shadow-md p-6"
                 
                 >
                   <div
-                    class="absolute top-0 left-4 w-12 h-4 bg-stone-200 rounded-b-lg"
+                    class="absolute top-0 left-4 w-12 h-4 bg-zinc-100 rounded-b-lg"
                   ></div>
                   <p class="text-center text-black font-medium text-lg mt-6">
                     {{ folder.title }}
@@ -92,7 +103,7 @@ import {
   IonCardTitle,
 } from "@ionic/vue";
 
-import { addOutline, home, folderOpen, list, person } from "ionicons/icons";
+import { add, home, folderOpen, list, person, arrowBack } from "ionicons/icons";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 
 export default defineComponent({
@@ -121,17 +132,16 @@ export default defineComponent({
       { id: 2, title: "Folder 2" },
       { id: 3, title: "Folder 3" },
       { id: 4, title: "Folder 4" },
-      { id: 5, title: "Folder 5" },
-      { id: 6, title: "Folder 6" },
     ]);
 
     return {
       folders,
-      addOutline,
+      add,
       home,
       folderOpen,
       list,
       person,
+      arrowBack,
     };
   },
 

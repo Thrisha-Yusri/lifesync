@@ -2,69 +2,68 @@
   <ion-page>
     <!-- Main Content -->
     <!-- <ion-content :fullscreen="true" class="p-0 flex flex-col"> -->
-      <!-- Top Section: Titles & Gradient Background -->
-      <div
-        class="h-[100vh] w-full flex flex-col items-center justify-center px-6 bg-cover bg-center"
-        style="background-image: url('/assets/background_image.jpg')"
+    <!-- Top Section: Titles & Gradient Background -->
+    <div
+      class="h-[100vh] w-full flex flex-col items-center justify-center px-6 bg-cover bg-center"
+      style="background-image: url('/assets/background_image.jpg')"
+    >
+      <h1 class="text-white p-10" style="font-size: 60px; font-weight: 800">
+        Hi there!
+      </h1>
+      <p
+        class="text-white text-center"
+        style="font-size: 24px; font-weight: 700"
       >
-        <h1 class="text-white p-10" style="font-size: 60px; font-weight: 800">
-          Hi there!
-        </h1>
-        <p
-          class="text-white text-center"
-          style="font-size: 24px; font-weight: 700"
-        >
-          Welcome to Life Sync
-        </p>
-        <form>
-          <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-6 mt-12">
-            <ion-list class="space-y-3">
-              <div class="flex items-center space-x-2">
-                <ion-icon
-                  slot="start"
-                  :icon="mail"
-                  aria-hidden="true"
-                ></ion-icon>
-                <ion-input
-                  label="Email"
-                  type="email"
-                  label-placement="floating"
-                  fill="solid"
-                  placeholder="jack@mail.com"
-                  v-model="dataObj.email"
-                ></ion-input>
-              </div>
-              <div class="flex items-center space-x-2">
-                <ion-icon
-                  slot="start"
-                  :icon="lockClosed"
-                  aria-hidden="true"
-                ></ion-icon>
-                <ion-input
-                  label="Password"
-                  type="password"
-                  label-placement="floating"
-                  fill="outline"
-                  placeholder="**********"
-                  v-model="dataObj.password"
-                ></ion-input>
-              </div>
+        Welcome to Life Sync
+      </p>
+      <form>
+        <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-6 mt-12">
+          <ion-list class="space-y-3">
+            <div class="flex items-center space-x-2">
+              <ion-icon slot="start" :icon="mail" aria-hidden="true"></ion-icon>
+              <ion-input
+                label="Email"
+                type="email"
+                label-placement="floating"
+                fill="solid"
+                placeholder="jack@mail.com"
+                v-model="dataObj.email"
+              ></ion-input>
+            </div>
+            <div class="flex items-center space-x-2">
+              <ion-icon
+                slot="start"
+                :icon="lockClosed"
+                aria-hidden="true"
+              ></ion-icon>
+              <ion-input
+                label="Password"
+                type="password"
+                label-placement="floating"
+                fill="outline"
+                placeholder="**********"
+                v-model="dataObj.password"
+              ></ion-input>
+            </div>
 
-              <ion-button
-                expand="full"
-                class="mt-4"
-                shape="round"
-                @click="login()"
-                >Log In</ion-button
+            <ion-button
+              expand="full"
+              class="mt-4"
+              shape="round"
+              @click="login()"
+              >Log In</ion-button
+            >
+
+            <div class="text-center text-sm mt-4 text-gray-500">
+              Don't have an account?
+              <span class="border-b" @click="$router.push('/signup')"
+                >Register Here!</span
               >
-
-              <div class="text-center text-sm mt-4 text-gray-500">
-                Don't have an account? <span class="border-b" @click="$router.push('/signup')">Register Here!</span>
-              </div>
-            </ion-list>
-          </div>
-        </form>
-      </div>
+            </div>
+          </ion-list>
+        </div>
+      </form>
+    </div>
     <!-- </ion-content> -->
   </ion-page>
 </template>

@@ -2,8 +2,18 @@
   <ion-page>
     <BaseLayout>
       <template #header>
-        <ion-toolbar color="primary">
-          <ion-title class="text-l">Profile</ion-title>
+        <ion-toolbar color="light">
+          <ion-button
+           
+            shape="round"
+            fill="clear"
+            @click="goBack"
+            class="ml-2"
+          >
+            <ion-icon slot="icon-only" :icon="arrowBack"></ion-icon>
+          </ion-button>
+
+          <ion-title class="text-xl">Life Sync</ion-title>
         </ion-toolbar>
       </template>
 
@@ -153,7 +163,8 @@ import {
   IonButton,
 } from "@ionic/vue";
 
-import { home, folderOpen, list, person } from "ionicons/icons";
+import { home, folderOpen, list, person, arrowBack } from "ionicons/icons";
+
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 
 export default defineComponent({
@@ -222,9 +233,9 @@ export default defineComponent({
       folderOpen,
       list,
       person,
+      arrowBack,
     };
   },
-
 });
 </script>
 
@@ -237,7 +248,6 @@ ion-avatar {
   padding: 3px; /* Optional: Adds spacing between image and border */
   border-radius: 50%; /* Ensures it's always circular */
 }
-
 
 /* Profile name styling */
 .text-xl {

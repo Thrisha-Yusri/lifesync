@@ -2,36 +2,66 @@
   <ion-page>
     <BaseLayout>
       <template #header>
-        <ion-toolbar color="primary">
-          <ion-title> Notes & To-Do List</ion-title>
+        <ion-toolbar color="light">
+          <ion-button shape="round" fill="clear" class="ml-2">
+            <ion-icon slot="icon-only" :icon="arrowBack"></ion-icon>
+          </ion-button>
+
+          <ion-title class="text-xl">Life Sync</ion-title>
         </ion-toolbar>
       </template>
 
       <template #content>
         <!-- Header Section: Folders title on the left, Add button on the right -->
         <div class="flex justify-between items-center p-4">
-          <ion-card-title class="card-title text-left text-l">Notes</ion-card-title>
-          <ion-button @click="todolistform()">
-            <ion-icon :icon="addOutline" style="color: white"></ion-icon> Add
-            Notes
+          <ion-card-title class="card-title text-left text-l"
+            >Notes</ion-card-title
+          >
+          <ion-button
+            class="h-8 px-3 text-sm flex items-center space-x-2"
+            @click="addnotes()"
+          >
+            <ion-icon :icon="add" style="color: white"></ion-icon>
           </ion-button>
         </div>
 
-        <div
-          v-if="notes.length > 0"
-          class="flex flex-wrap justify-center gap-2"
-        >
-          <div
-            v-for="(note, index) in notes"
-            :key="index"
-            class="p-3 w-[300px] h-[100px] bg-stone-400 rounded-lg shadow flex flex-col justify-center mt-1"
-          >
-            <h3 class="font-bold text-black-800 truncate">
-              {{ note.title }}
-            </h3>
-            <p class="text-gray-700 text-sm truncate">{{ note.content }}</p>
+        <!-- Display fetched tasks -->
+        <div class="p-4 flex justify-center">
+          <!-- Card Container -->
+          <div class="bg-white shadow-lg rounded-xl p-6 w-full max-w-md">
+
+            <!-- Display Tasks -->
+            <div v-if="tasks.length > 0" class="mb-4">
+              <h3 class="text-lg font-semibold">Notes & Tasks</h3>
+              <div
+                v-for="(task, index) in tasks"
+                :key="index"
+                class="p-2 bg-gray-100 rounded-md mb-2"
+              >
+                <strong>{{ task.title }}</strong>
+                <p class="text-sm text-gray-700">{{ task.note }}</p>
+
+                <!-- Display Task List -->
+                <ul v-if="task.tasks && task.tasks.length > 0" class="mt-2">
+                  <li
+                    v-for="(t, i) in task.tasks"
+                    :key="i"
+                    class="flex items-center space-x-2"
+                  >
+                    <ion-checkbox v-model="t.completed"></ion-checkbox>
+                    <span :class="{ 'line-through': t.completed }">{{
+                      t.text
+                    }}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Show message if no tasks -->
+            <p v-else class="text-center text-gray-500 p-4">No tasks found.</p>
           </div>
         </div>
+
       </template>
 
       <template #footer>
@@ -83,10 +113,12 @@ import {
   IonIcon,
 } from "@ionic/vue";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
-import { addOutline, home, folderOpen, list, person } from "ionicons/icons";
+import { add, home, folderOpen, list, person, arrowBack } from "ionicons/icons";
+import db from "@/firebase/init.js";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 export default defineComponent({
-  name: "ViewNotesTodos",
   components: {
     IonTabs,
     IonTabBar,
@@ -104,34 +136,78 @@ export default defineComponent({
     IonCheckbox,
     BaseLayout,
   },
-  setup() {
-    const notes = ref([
-      {
-        title: "Meeting Notes",
-        content: "Discuss project updates with the team.",
-      },
-      { title: "Shopping List", content: "Buy milk, eggs, and bread." },
-    ]);
 
-    const todos = ref([
-      { task: "Finish coding assignment", completed: false },
-      { task: "Call the bank", completed: true },
-    ]);
+  ionViewDidEnter() {
+    this.getTasks();
+    this.userData = JSON.parse(localStorage.getItem("user"));
+  },
 
+  mounted() {
+    this.getTasks(); // Ensure it runs when the page loads
+  },
+
+  data() {
     return {
-      addOutline,
-      notes,
-      todos,
+      notes: [
+        {
+          title: "Meeting Notes",
+          content: "Discuss project updates with the team.",
+        },
+        { title: "Shopping List", content: "Buy milk, eggs, and bread." },
+      ],
+      todos: [
+        { task: "Finish coding assignment", completed: false },
+        { task: "Call the bank", completed: true },
+      ],
+
+      add,
       home,
       folderOpen,
       list,
       person,
+      arrowBack,
+      tasks: [],
+      userData: null,
     };
   },
 
   methods: {
     addnotes() {
       this.$router.push("/todolistform");
+    },
+
+    async getTasks() {
+      //inistialize firebase authentication
+      const auth = getAuth();
+      //get the user from local storage
+      let user = JSON.parse(localStorage.getItem("user"));
+      //get the events from the database
+      const queryRef = query(
+        //get the collection of events
+        collection(db, "tasks"),
+        //get the events where the userId is equal to the user id
+        where("userId", "==", user.uid)
+      );
+
+      //get the documents from the query
+      const docSnap = await getDocs(queryRef);
+
+      //if the document is not empty
+      if (!docSnap.empty) {
+        //map the documents to the data
+        let result = [];
+        //get the data from the documents
+        result = docSnap.docs.map((doc) => doc.data());
+
+        const updatedData = result.map((item, index) => ({
+          ...item,
+          id: index,
+        }));
+        //set the events to the result
+        this.tasks = updatedData;
+      } else {
+        console.log("No such tasks!");
+      }
     },
   },
 });

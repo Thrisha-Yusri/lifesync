@@ -1,80 +1,81 @@
 <template>
-  <ion-header>
-    <ion-toolbar color="primary">
-      <ion-title class="text-l">Notes & To-Do List</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-page>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title class="text-xl">Notes & To-do List</ion-title>
+      </ion-toolbar>
+    </ion-header>
 
-  <ion-content color="light">
-    <ion-card class="ion-padding">
-      <ion-card-header>
-        <ion-card-title class="card-title text-lg font-bold p-4">My Notes</ion-card-title>
-      </ion-card-header>
-
-      <ion-card-content>
-        <!-- Notes Title Input -->
-        <div class="mb-4">
-          <ion-input
-            v-model="noteTitle"
-            label="Title"
-            label-placement="floating"
-            placeholder="Enter title"
-            class="w-full p-2 border rounded-md"
-          ></ion-input>
-        </div>
-
-        <!-- Notes Input -->
-        <div class="mb-4">
-          <ion-label position="floating">Write a Note</ion-label>
-          <ion-textarea
-            v-model="noteText"
-            autoGrow
-            placeholder="Enter your notes..."
-            rows="10"
-            class="border p-3 w-full rounded-lg shadow-xs"
-          ></ion-textarea>
-        </div>
-
-        <!-- To-Do List Section -->
+    <ion-content color="light">
+      <ion-card class="ion-padding">
         <ion-card-header>
-          <ion-card-title class="card-title text-lg font-bold p-4">To-Do List</ion-card-title>
+          <ion-card-title class="card-title text-lg font-bold p-4">Notes</ion-card-title>
         </ion-card-header>
 
-        <div class="mb-4 flex">
-          <ion-input
-            v-model="newTask"
-            label="New Task"
-            label-placement="floating"
-            placeholder="Enter a task..."
-            class="w-full"
-          ></ion-input>
-          <ion-button @click="addTask" color="primary" class="px-3 py-1">Add</ion-button>
-        </div>
+        <ion-card-content>
+          <div class="mb-4">
+            <ion-input
+              v-model="dataObj.title"
+              label="Title"
+              label-placement="floating"
+              placeholder="Enter title"
+              class="w-full p-2 border rounded-md"
+            ></ion-input>
+          </div>
 
-       
-        <ion-list v-if="tasks.length > 0" class="bg-white rounded-md shadow p-3">
-          <ion-item v-for="(task, index) in tasks" :key="index">
-            <ion-checkbox v-model="task.completed" class="mr-2"></ion-checkbox>
-            <ion-label :class="{ 'line-through': task.completed }">{{ task.text }}</ion-label>
-            <ion-button fill="clear" @click="removeTask(index)">
-              <ion-icon name="trash-outline" class="text-red-500"></ion-icon>
-            </ion-button>
-          </ion-item>
-        </ion-list>
+          <div class="mb-4">
+            <ion-textarea
+              autoGrow
+              v-model="dataObj.note"
+              label="Note"
+              label-placement="floating"
+              placeholder="Enter Notes"
+              rows="10"
+            ></ion-textarea>
+          </div>
 
-       
-        <div class="flex justify-end mt-6 space-x-2">
-          <ion-button color="danger">Cancel</ion-button>
-          <ion-button color="primary">Save</ion-button>
-        </div>
-      </ion-card-content>
-    </ion-card>
-  </ion-content>
+          <ion-card-header>
+            <ion-card-title class="card-title text-l font-bold p-4">To-Do List</ion-card-title>
+          </ion-card-header>
+
+          <div class="mb-4 flex">
+            <ion-input
+              v-model="newTask"
+              label="Task"
+              label-placement="floating"
+              placeholder="Enter a task..."
+              class="w-full"
+            ></ion-input>
+            <ion-button @click="addTask" color="primary" class="px-3 py-1">Add</ion-button>
+          </div>
+
+          <ion-list v-if="dataObj.tasks.length > 0" class="bg-white rounded-md shadow p-3">
+            <ion-item v-for="(task, index) in dataObj.tasks" :key="index">
+              <ion-label :class="{ 'line-through': task.completed }">{{ task.text }}</ion-label>
+              <ion-button fill="clear" @click="removeTask(index)">
+                <ion-icon :icon="trash" color="danger" />
+              </ion-button>
+            </ion-item>
+          </ion-list>
+
+          <div class="flex justify-between mt-4">
+            <ion-button fill="solid" color="danger" class="flex-1 mx-1" @click="cancelNotes()">Cancel</ion-button>
+            <ion-button fill="solid" color="primary" class="flex-1 mx-1" @click="saveNotes()">Save</ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </ion-content>
+  </ion-page>
 </template>
 
-<script lang="ts">
+<script>
+import db from "@/firebase/init.js";
+import { collection, addDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import { defineComponent, ref } from "vue";
 import {
+  IonPage,
+  IonButton,
   IonContent,
   IonHeader,
   IonInput,
@@ -85,16 +86,16 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardContent,
-  IonButton,
   IonLabel,
   IonTextarea,
   IonList,
-  IonCheckbox,
   IonIcon,
 } from "@ionic/vue";
+import { trash } from "ionicons/icons";
 
 export default defineComponent({
   components: {
+    IonPage,
     IonContent,
     IonHeader,
     IonInput,
@@ -109,47 +110,68 @@ export default defineComponent({
     IonLabel,
     IonTextarea,
     IonList,
-    IonCheckbox,
     IonIcon,
   },
-  setup() {
-    const noteTitle = ref(""); // New Title Field
-    const noteText = ref("");
-    const newTask = ref("");
-    const tasks = ref<{ text: string; completed: boolean }[]>([]);
-
-    const addTask = () => {
-      if (newTask.value.trim() !== "") {
-        tasks.value.push({ text: newTask.value, completed: false });
-        newTask.value = "";
+  data() {
+    return {
+      newTask: "",
+      dataObj: {
+        title: "",
+        note: "",
+        tasks: [],
+      },
+      trash,
+      
+    };
+  },
+  methods: {
+    addTask() {
+      if (this.newTask.trim() !== "") {
+        this.dataObj.tasks.push({ text: this.newTask, completed: false });
+        this.newTask = "";
       }
-    };
+    },
+    removeTask(index) {
+      this.dataObj.tasks.splice(index, 1);
+    },
+    cancelNotes() {
+      console.log("Cancelled");
+    },
+    async saveNotes() {
+      try {
+        const auth = getAuth();
+        let user = JSON.parse(localStorage.getItem("user"));
 
-    const removeTask = (index: number) => {
-      tasks.value.splice(index, 1);
-    };
+        let data = {
+          ...this.dataObj,
+          userId: user.uid,
+        };
 
-    return { noteTitle, noteText, newTask, tasks, addTask, removeTask };
+        const colRef = collection(db, "tasks");
+        const docRef = await addDoc(colRef, data);
+
+        this.$toast("Successfully created!", 3000, "success");
+        this.$router.push("/tasks");
+      } catch (error) {
+        console.log(error);
+        this.$toast("Error!", 3000, "danger");
+      }
+    },
   },
 });
 </script>
 
 <style scoped>
-/* Styling for the card */
 ion-card {
   margin: 20px;
   border-radius: 12px;
 }
-
-/* Title styling */
 .card-title {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
   margin-bottom: 10px;
 }
-
-/* Task completed styling */
 .line-through {
   text-decoration: line-through;
   color: gray;

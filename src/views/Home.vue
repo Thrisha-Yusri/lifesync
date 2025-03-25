@@ -4,14 +4,15 @@
     <BaseLayout>
       <template #header>
         <ion-toolbar color="primary">
-          <ion-title class="text-xl">Home</ion-title>
+          <ion-title class="text-xl">Life Sync</ion-title>
         </ion-toolbar>
       </template>
 
       <template #content>
-        <div class="font-bold font"> 
+        <p class="font-bold text-xl m-2 "> 
+          
           Hello, {{ userData?.name }}
-        </div>
+        </p>
         <ion-searchbar></ion-searchbar>
         <!-- Calendar Section -->
         <CustomCard title="Calendar">
@@ -31,13 +32,13 @@
         <!-- Folders Section -->
         <div class="py-6">
           <div class="flex justify-between items-center pr-2 pb-4">
-            <div class="pb-2 font-bold">Folders</div>
+            <div class="pb-2 font-bold text-xl">Folders</div>
             <ion-button
               class="h-8 px-3 text-sm flex items-center space-x-2"
               @click="addfolder()"
             >
               <ion-icon :icon="add" style="color: white"></ion-icon>
-              <span class="font-medium">Add Folder</span>
+        
             </ion-button>
           </div>
 
@@ -108,7 +109,6 @@ import {
   IonSearchbar,
 } from "@ionic/vue";
 import { add, home, folderOpen, list, person } from "ionicons/icons";
-
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import CustomCard from "@/components/templates/CustomCard.vue";
 import CustomCalendar from "@/components/templates/CustomCalendar.vue";
@@ -247,4 +247,5 @@ export default defineComponent({
   justify-content: center;
   height: 100%;
 }
+
 </style>
