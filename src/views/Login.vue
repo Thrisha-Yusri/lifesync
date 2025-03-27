@@ -12,7 +12,7 @@
       </h1>
       <p
         class="text-white text-center"
-        style="font-size: 24px; font-weight: 700"
+        style="font-size: 28px; font-weight: 800"
       >
         Welcome to Life Sync
       </p>
@@ -44,6 +44,7 @@
                 placeholder="**********"
                 v-model="dataObj.password"
               ></ion-input>
+              
             </div>
 
             <ion-button

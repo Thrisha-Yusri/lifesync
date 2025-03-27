@@ -2,8 +2,17 @@
   <ion-page>
     <ion-header>
       <ion-toolbar color="primary">
-        <ion-title class="text-xl">Notes & To-do List</ion-title>
-      </ion-toolbar>
+          <ion-button
+           
+            shape="round"
+            fill="clear"
+            class="ml-2"
+          >
+            <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
+          </ion-button>
+
+          <ion-title class="text-xl">Notes & To-do List</ion-title>
+        </ion-toolbar>
     </ion-header>
 
     <ion-content color="light">
@@ -91,7 +100,7 @@ import {
   IonList,
   IonIcon,
 } from "@ionic/vue";
-import { trash } from "ionicons/icons";
+import { arrowBack, trash } from "ionicons/icons";
 
 export default defineComponent({
   components: {
@@ -121,6 +130,7 @@ export default defineComponent({
         tasks: [],
       },
       trash,
+      arrowBack,
       
     };
   },

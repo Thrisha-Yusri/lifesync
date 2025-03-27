@@ -2,7 +2,7 @@
   <ion-page>
     <BaseLayout
       ><template #header>
-        <ion-toolbar color="light">
+        <ion-toolbar color="primary">
           <ion-button
            
             shape="round"
@@ -10,7 +10,7 @@
             @click="goBack"
             class="ml-2"
           >
-            <ion-icon slot="icon-only" :icon="arrowBack"></ion-icon>
+            <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
           </ion-button>
 
           <ion-title class="text-xl">Life Sync</ion-title>
@@ -23,10 +23,10 @@
           <div class="flex justify-between items-center pb-6">
           <ion-card-title class="card-title text-left text-l">Folders</ion-card-title>
           <ion-button
-              class="h-8 px-3 text-sm flex items-center space-x-2"
+              class="h-8 px-4 text-sm flex items-center "
               @click="addfolder()"
             >
-              <ion-icon :icon="add" style="color: white"></ion-icon>
+              <ion-icon :icon="add" style="color: white"></ion-icon> Add Folder
         
             </ion-button>
         </div>

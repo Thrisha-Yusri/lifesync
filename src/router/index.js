@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import TabsPage from '../views/Folderform.vue';
-import TodoPage from '@/views/Todo.vue';
 
 const routes = [
   {
@@ -58,10 +57,9 @@ const routes = [
     component: () => import('@/views/Profile.vue')
   },
   {
-    path: '/todo/:taskId?',
-    name: 'todo',
-    component: TodoPage,
-    props: true
+    path: '/tasks',
+    name: 'tasks',
+    component: () => import('@/views/Tasks.vue')
   },
   {
     path: '/todo',

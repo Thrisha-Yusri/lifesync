@@ -1,9 +1,18 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="light">
-        <ion-title class="text-xl">Reminder</ion-title>
-      </ion-toolbar>
+      <ion-toolbar color="primary">
+          <ion-button
+           
+            shape="round"
+            fill="clear"
+            class="ml-2"
+          >
+            <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
+          </ion-button>
+
+          <ion-title class="text-xl">Reminder</ion-title>
+        </ion-toolbar>
     </ion-header>
 
     <ion-content color="light">
@@ -128,6 +137,7 @@ import {
   IonCol,
   IonIcon,
 } from "@ionic/vue";
+import { arrowBack } from "ionicons/icons";
 
 export default {
   components: {
@@ -156,6 +166,7 @@ export default {
 
   data() {
     return {
+      arrowBack,
       dataObj: {
         title: "",
         with: "",

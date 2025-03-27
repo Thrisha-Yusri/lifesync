@@ -5,14 +5,16 @@
       <template #header>
         <ion-toolbar color="primary">
           <ion-title class="text-xl">Life Sync</ion-title>
+          <ion-buttons slot="end">
+            <ion-button @click="logout()">
+              <ion-icon :icon="logOutOutline" color="light"></ion-icon>
+            </ion-button>
+          </ion-buttons>
         </ion-toolbar>
       </template>
 
       <template #content>
-        <p class="font-bold text-xl m-2 "> 
-          
-          Hello, {{ userData?.name }}
-        </p>
+        <p class="font-bold text-xl m-2">Hello, {{ userData?.name }}</p>
         <ion-searchbar></ion-searchbar>
         <!-- Calendar Section -->
         <CustomCard title="Calendar">
@@ -34,12 +36,13 @@
           <div class="flex justify-between items-center pr-2 pb-4">
             <div class="pb-2 font-bold text-xl">Folders</div>
             <ion-button
-              class="h-8 px-3 text-sm flex items-center space-x-2"
-              @click="addfolder()"
-            >
-              <ion-icon :icon="add" style="color: white"></ion-icon>
-        
-            </ion-button>
+  class="h-8 px-2 text-sm flex items-center justify-center space-x-1"
+  @click="addfolder()"
+>
+  <ion-icon :icon="add" style="color: white;" class="text-lg"></ion-icon>
+  <span>Add Folder</span>
+</ion-button>
+
           </div>
 
           <!-- Folder Grid -->
@@ -107,8 +110,9 @@ import {
   IonPage,
   IonButton,
   IonSearchbar,
+  IonButtons,
 } from "@ionic/vue";
-import { add, home, folderOpen, list, person } from "ionicons/icons";
+import { add, home, folderOpen, list, person, logOutOutline } from "ionicons/icons";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import CustomCard from "@/components/templates/CustomCard.vue";
 import CustomCalendar from "@/components/templates/CustomCalendar.vue";
@@ -136,13 +140,13 @@ export default defineComponent({
     CustomCard,
     CustomCalendar,
     IonSearchbar,
+    IonButtons,
   },
 
-//run everytime this page is open
+  //run everytime this page is open
   ionViewDidEnter() {
     this.getEvents();
-    this.userData = JSON.parse(localStorage.getItem("user"))
-    
+    this.userData = JSON.parse(localStorage.getItem("user"));
   },
 
   data() {
@@ -162,11 +166,10 @@ export default defineComponent({
         friends: "",
       },
       events: [],
-      userData:null,
+      userData: null,
+      logOutOutline,
     };
   },
-
-
 
   methods: {
     openAddFolderModal() {
@@ -188,6 +191,8 @@ export default defineComponent({
     addfolder() {
       this.$router.push("/folderform");
     },
+    
+
     async getEvents() {
       //inistialize firebase authentication
       const auth = getAuth();
@@ -213,7 +218,7 @@ export default defineComponent({
 
         const updatedData = result.map((item, index) => ({
           ...item,
-          id:index,
+          id: index,
           time: {
             start: this.formatDate(item.time.start),
             end: this.formatDate(item.time.end),
@@ -247,5 +252,4 @@ export default defineComponent({
   justify-content: center;
   height: 100%;
 }
-
 </style>

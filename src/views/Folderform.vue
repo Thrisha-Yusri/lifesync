@@ -3,6 +3,16 @@
     <BaseLayout>
       <template #header
         ><ion-toolbar color="primary">
+          <ion-button
+           
+            shape="round"
+            fill="clear"
+            @click="goBack"
+            class="ml-2"
+          >
+            <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
+          </ion-button>
+
           <ion-title class="text-xl">Folder</ion-title>
         </ion-toolbar></template
       >
@@ -140,7 +150,7 @@ import {
   IonTextarea,
 } from "@ionic/vue";
 import { defineComponent, ref } from "vue";
-import { trash } from "ionicons/icons";
+import { trash, arrowBack} from "ionicons/icons";
 
 export default defineComponent({
   components: {
@@ -197,6 +207,7 @@ export default defineComponent({
       selectedFiles,
       removeFile,
       trash,
+      arrowBack,
     };
   },
 });

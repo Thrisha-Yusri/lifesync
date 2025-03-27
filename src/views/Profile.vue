@@ -2,7 +2,7 @@
   <ion-page>
     <BaseLayout>
       <template #header>
-        <ion-toolbar color="light">
+        <ion-toolbar color="primary">
           <ion-button
            
             shape="round"
@@ -10,7 +10,7 @@
             @click="goBack"
             class="ml-2"
           >
-            <ion-icon slot="icon-only" :icon="arrowBack"></ion-icon>
+            <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
           </ion-button>
 
           <ion-title class="text-xl">Life Sync</ion-title>
@@ -22,16 +22,16 @@
           <!-- Profile Header -->
           <div class="flex flex-col items-center mt-6">
             <ion-avatar class="w-24 h-24">
-              <img
+              <!-- <img
                 :src="user.profileImage"
                 alt="Profile Picture"
                 class="rounded-full"
-              />
+              /> -->
             </ion-avatar>
             <h1 class="text-black p-5" style="font-size: px; font-weight: 800">
-              {{ user.name }}
+              {{ userData?.name }}
             </h1>
-            <p class="text-gray-500">{{ user.email }}</p>
+            <p class="text-gray-500">{{ userData?.email }}</p>
           </div>
 
           <!-- Profile Details -->
@@ -40,11 +40,11 @@
               <ion-list>
                 <ion-item>
                   <ion-label>Name</ion-label>
-                  <ion-text>{{ user.name }}</ion-text>
+                  <ion-text>{{ userData?.name }}</ion-text>
                 </ion-item>
                 <ion-item>
                   <ion-label>Email</ion-label>
-                  <ion-text>{{ user.email }}</ion-text>
+                  <ion-text>{{ userData?.email }}</ion-text>
                 </ion-item>
                 <ion-item>
                   <ion-label>Password</ion-label>
@@ -59,7 +59,7 @@
             </ion-card-content>
           </ion-card>
 
-          <!-- Add My Members -->
+<!--        
           <ion-card class="mt-4 p-6">
             <ion-card-header>
               <ion-card-title>My Members</ion-card-title>
@@ -67,7 +67,7 @@
             <ion-card-content>
               <ion-card-content>
                 <ion-list>
-                  <!-- Input and Add Button Side by Side -->
+                  
                   <div class="flex items-center space-x-1 mb-4">
                     <ion-input
                       v-model="newMember"
@@ -81,7 +81,7 @@
                     >
                   </div>
 
-                  <!-- Friend List Appears Below -->
+               
                   <div v-if="members.length > 0">
                     <ion-item v-for="(member, index) in members" :key="index">
                       <ion-label>{{ member.name }}</ion-label>
@@ -96,7 +96,7 @@
                 </ion-list>
               </ion-card-content>
             </ion-card-content>
-          </ion-card>
+          </ion-card> -->
 
           <!-- Edit Profile Button -->
           <div class="flex justify-center mt-4">
@@ -164,7 +164,9 @@ import {
 } from "@ionic/vue";
 
 import { home, folderOpen, list, person, arrowBack } from "ionicons/icons";
-
+import db from "@/firebase/init.js";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 
 export default defineComponent({
@@ -192,54 +194,70 @@ export default defineComponent({
     IonButton,
     BaseLayout,
   },
-  setup() {
-    const user = ref({
-      profileImage: "https://via.placeholder.com/150", // Change to real image
-      name: " Scoupsss",
-      email: "scoupss@example.com",
-    });
+  ionViewDidEnter() {
+    this.getUser();
+    this.userData = JSON.parse(localStorage.getItem("user"));
+  },
 
-    const members = ref([]);
-    const newMember = ref("");
-
-    const editProfile = () => {
-      console.log("Edit Profile Clicked");
-    };
-
-    const editPassword = () => {
-      console.log("Edit Password Clicked");
-    };
-
-    const addMember = () => {
-      if (newMember.value.trim() !== "") {
-        members.value.push({ name: newMember.value });
-        newMember.value = "";
-      }
-    };
-
-    const removeMember = (index) => {
-      members.value.splice(index, 1);
-    };
-
+  data() {
     return {
-      user,
-      editProfile,
-      editPassword,
-      members,
-      newMember,
-      addMember,
-      removeMember,
+      users: [], 
       home,
       folderOpen,
       list,
       person,
       arrowBack,
+      userData: null,
     };
   },
+  methods: {
+  async getUser() {
+    // Initialize Firebase authentication
+    const auth = getAuth();
+    // Get the user from local storage
+    let user = JSON.parse(localStorage.getItem("user"));
+    // Get the events from the database
+    const queryRef = query(
+      // Get the collection of events
+      collection(db, "users"),
+      // Get the events where the userId is equal to the user id
+      where("userId", "==", user.uid)
+    );
+
+    // Get the documents from the query
+    const docSnap = await getDocs(queryRef);
+
+    // If the document is not empty
+    if (!docSnap.empty) {
+      // Map the documents to the data
+      let result = [];
+      result = docSnap.docs.map((doc) => doc.data());
+
+      const updatedData = result.map((item, index) => ({
+        ...item,
+        id: index,
+      }));
+      this.tasks = updatedData;
+    } else {
+      console.log("No such User!");
+    }
+  },
+
+  editPassword() {
+    console.log("Edit Password clicked!");
+    // Add your logic here for password editing
+  },
+
+  editProfile() {
+    console.log("Edit Profile clicked!");
+    // Add your logic here for profile editing
+  },
+},
+
 });
 </script>
 
-<style scoped>
+<style >
 /* Avatar styling */
 ion-avatar {
   width: 96px;

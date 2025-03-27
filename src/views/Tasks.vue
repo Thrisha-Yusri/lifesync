@@ -2,9 +2,15 @@
   <ion-page>
     <BaseLayout>
       <template #header>
-        <ion-toolbar color="light">
-          <ion-button shape="round" fill="clear" class="ml-2">
-            <ion-icon slot="icon-only" :icon="arrowBack"></ion-icon>
+        <ion-toolbar color="primary">
+          <ion-button
+           
+            shape="round"
+            fill="clear"
+            @click="goBack"
+            class="ml-2"
+          >
+            <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
           </ion-button>
 
           <ion-title class="text-xl">Life Sync</ion-title>
@@ -21,47 +27,41 @@
             class="h-8 px-3 text-sm flex items-center space-x-2"
             @click="addnotes()"
           >
-            <ion-icon :icon="add" style="color: white"></ion-icon>
+            <ion-icon :icon="add" style="color: white"></ion-icon> Add Notes
           </ion-button>
         </div>
 
         <!-- Display fetched tasks -->
         <div class="p-4 flex justify-center">
-          <!-- Card Container -->
-          <div class="bg-white shadow-lg rounded-xl p-6 w-full max-w-md">
+          <!-- Display Tasks -->
+          <div v-if="tasks.length > 0" class="w-full">
+            <div
+              v-for="(task, index) in tasks"
+              :key="index"
+              class="p-2 bg-gray-100 rounded-md mb-2"
+            >
+              <strong>{{ task.title }}</strong>
+              <p class="text-sm text-gray-700">Note: {{ task.note }}</p>
 
-            <!-- Display Tasks -->
-            <div v-if="tasks.length > 0" class="mb-4">
-              <h3 class="text-lg font-semibold">Notes & Tasks</h3>
-              <div
-                v-for="(task, index) in tasks"
-                :key="index"
-                class="p-2 bg-gray-100 rounded-md mb-2"
-              >
-                <strong>{{ task.title }}</strong>
-                <p class="text-sm text-gray-700">{{ task.note }}</p>
-
-                <!-- Display Task List -->
-                <ul v-if="task.tasks && task.tasks.length > 0" class="mt-2">
-                  <li
-                    v-for="(t, i) in task.tasks"
-                    :key="i"
-                    class="flex items-center space-x-2"
-                  >
-                    <ion-checkbox v-model="t.completed"></ion-checkbox>
-                    <span :class="{ 'line-through': t.completed }">{{
-                      t.text
-                    }}</span>
-                  </li>
-                </ul>
-              </div>
+              <!-- Display Task List -->
+              <ul v-if="task.tasks && task.tasks.length > 0" class="mt-2">
+                <li
+                  v-for="(t, i) in task.tasks"
+                  :key="i"
+                  class="flex items-center space-x-2"
+                >
+                  <ion-checkbox v-model="t.completed"></ion-checkbox>
+                  <span :class="{ 'line-through': t.completed }">{{
+                    t.text
+                  }}</span>
+                </li>
+              </ul>
             </div>
-
-            <!-- Show message if no tasks -->
-            <p v-else class="text-center text-gray-500 p-4">No tasks found.</p>
           </div>
-        </div>
 
+          <!-- Show message if no tasks -->
+          <p v-else class="text-center text-gray-500 p-4">No tasks found.</p>
+        </div>
       </template>
 
       <template #footer>
@@ -142,24 +142,8 @@ export default defineComponent({
     this.userData = JSON.parse(localStorage.getItem("user"));
   },
 
-  mounted() {
-    this.getTasks(); // Ensure it runs when the page loads
-  },
-
   data() {
     return {
-      notes: [
-        {
-          title: "Meeting Notes",
-          content: "Discuss project updates with the team.",
-        },
-        { title: "Shopping List", content: "Buy milk, eggs, and bread." },
-      ],
-      todos: [
-        { task: "Finish coding assignment", completed: false },
-        { task: "Call the bank", completed: true },
-      ],
-
       add,
       home,
       folderOpen,
