@@ -1,8 +1,7 @@
 <template>
   <ion-page>
     <!-- Main Content -->
-    <!-- <ion-content :fullscreen="true" class="p-0 flex flex-col"> -->
-    <!-- Top Section: Titles & Gradient Background -->
+
     <div
       class="h-[100vh] w-full flex flex-col items-center justify-center px-6 bg-cover bg-center"
       style="background-image: url('/assets/background_image.jpg')"
@@ -20,7 +19,7 @@
         <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-6 mt-12">
           <ion-list class="space-y-3">
             <div class="flex items-center space-x-2">
-              <ion-icon slot="start" :icon="mail" aria-hidden="true"></ion-icon>
+              <ion-icon slot="start" :icon="mail" aria-hidden="true" color="primary"></ion-icon>
               <ion-input
                 label="Email"
                 type="email"
@@ -35,6 +34,7 @@
                 slot="start"
                 :icon="lockClosed"
                 aria-hidden="true"
+                color="primary"
               ></ion-icon>
               <ion-input
                 label="Password"

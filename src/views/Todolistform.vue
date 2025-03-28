@@ -1,24 +1,26 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar color="primary">
-          <ion-button
-           
-            shape="round"
-            fill="clear"
-            class="ml-2"
-          >
-            <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
-          </ion-button>
+    <!-- <ion-header> -->
+    <ion-toolbar color="primary">
+      <ion-button
+        shape="round"
+        fill="clear"
+        class="ml-2"
+        @click="cancelNotes()"
+      >
+        <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
+      </ion-button>
 
-          <ion-title class="text-xl">Notes & To-do List</ion-title>
-        </ion-toolbar>
-    </ion-header>
+      <ion-title class="text-l">TO-DO LIST</ion-title>
+    </ion-toolbar>
+    <!-- </ion-header> -->
 
     <ion-content color="light">
       <ion-card class="ion-padding">
         <ion-card-header>
-          <ion-card-title class="card-title text-lg font-bold p-4">Notes</ion-card-title>
+          <ion-card-title class="card-title text-lg font-bold p-4"
+            >To-do List Details</ion-card-title
+          >
         </ion-card-header>
 
         <ion-card-content>
@@ -33,21 +35,6 @@
           </div>
 
           <div class="mb-4">
-            <ion-textarea
-              autoGrow
-              v-model="dataObj.note"
-              label="Note"
-              label-placement="floating"
-              placeholder="Enter Notes"
-              rows="10"
-            ></ion-textarea>
-          </div>
-
-          <ion-card-header>
-            <ion-card-title class="card-title text-l font-bold p-4">To-Do List</ion-card-title>
-          </ion-card-header>
-
-          <div class="mb-4 flex">
             <ion-input
               v-model="newTask"
               label="Task"
@@ -55,21 +42,51 @@
               placeholder="Enter a task..."
               class="w-full"
             ></ion-input>
-            <ion-button @click="addTask" color="primary" class="px-3 py-1">Add</ion-button>
+            <div class="flex justify-end pt-2">
+              <ion-icon
+                :icon="addCircleOutline"
+                color="secondary"
+                @click="addTask"
+              ></ion-icon>
+            </div>
+        
           </div>
 
-          <ion-list v-if="dataObj.tasks.length > 0" class="bg-white rounded-md shadow p-3">
+          <div>
+            <div class="font-bold text-lg mb-2">Added Tasks</div>
+          </div>
+
+          <ion-list v-if="dataObj.tasks.length > 0">
             <ion-item v-for="(task, index) in dataObj.tasks" :key="index">
-              <ion-label :class="{ 'line-through': task.completed }">{{ task.text }}</ion-label>
+              <ion-icon :icon="squareOutline" size="small"></ion-icon>
+              <ion-label :class="{ 'line-through': task.completed }"
+                ><span class="pl-2">{{ task.text }}</span></ion-label
+              >
               <ion-button fill="clear" @click="removeTask(index)">
                 <ion-icon :icon="trash" color="danger" />
               </ion-button>
             </ion-item>
           </ion-list>
 
+          <div class="text-gray-500 italic text-center py-4 text-sm" v-else>
+            No existing list
+          </div>
+
           <div class="flex justify-between mt-4">
-            <ion-button fill="solid" color="danger" class="flex-1 mx-1" @click="cancelNotes()">Cancel</ion-button>
-            <ion-button fill="solid" color="primary" class="flex-1 mx-1" @click="saveNotes()">Save</ion-button>
+            <ion-button
+              fill="solid"
+              color="danger"
+              class="flex-1 mx-1"
+              @click="cancelNotes()"
+              >Cancel</ion-button
+            >
+            <ion-button
+              fill="solid"
+              color="primary"
+              class="flex-1 mx-1"
+              @click="saveNotes()"
+              >Save</ion-button
+            >
           </div>
         </ion-card-content>
       </ion-card>
@@ -100,7 +117,13 @@ import {
   IonList,
   IonIcon,
 } from "@ionic/vue";
-import { arrowBack, trash } from "ionicons/icons";
+import {
+  arrowBack,
+  trash,
+  addCircleOutline,
+  add,
+  squareOutline,
+} from "ionicons/icons";
 
 export default defineComponent({
   components: {
@@ -131,7 +154,8 @@ export default defineComponent({
       },
       trash,
       arrowBack,
-      
+      addCircleOutline,
+      squareOutline,
     };
   },
   methods: {
@@ -146,6 +170,7 @@ export default defineComponent({
     },
     cancelNotes() {
       console.log("Cancelled");
+      this.$router.push("/home");
     },
     async saveNotes() {
       try {

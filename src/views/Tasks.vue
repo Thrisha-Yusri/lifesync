@@ -2,18 +2,8 @@
   <ion-page>
     <BaseLayout>
       <template #header>
-        <ion-toolbar color="primary">
-          <ion-button
-           
-            shape="round"
-            fill="clear"
-            @click="goBack"
-            class="ml-2"
-          >
-            <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
-          </ion-button>
-
-          <ion-title class="text-xl">Life Sync</ion-title>
+        <ion-toolbar color="light">
+          <ion-title class="text-l">Life-Sync</ion-title>
         </ion-toolbar>
       </template>
 
@@ -21,27 +11,27 @@
         <!-- Header Section: Folders title on the left, Add button on the right -->
         <div class="flex justify-between items-center p-4">
           <ion-card-title class="card-title text-left text-l"
-            >Notes</ion-card-title
+            >My To-do List</ion-card-title
           >
-          <ion-button
-            class="h-8 px-3 text-sm flex items-center space-x-2"
-            @click="addnotes()"
-          >
-            <ion-icon :icon="add" style="color: white"></ion-icon> Add Notes
-          </ion-button>
+          <div class="flex justify-end pt-2">
+            <ion-icon
+              :icon="addCircleOutline"
+              color="secondary"
+              @click="addnotes()"
+            ></ion-icon>
+          </div>
         </div>
 
         <!-- Display fetched tasks -->
-        <div class="p-4 flex justify-center">
+        <div class=" flex justify-center">
           <!-- Display Tasks -->
           <div v-if="tasks.length > 0" class="w-full">
             <div
               v-for="(task, index) in tasks"
               :key="index"
-              class="p-2 bg-gray-100 rounded-md mb-2"
+              class="px-6 py-4 bg-amber-100 rounded-md mb-2"
             >
-              <strong>{{ task.title }}</strong>
-              <p class="text-sm text-gray-700">Note: {{ task.note }}</p>
+              <strong class="text-lg">{{ task.title }}</strong>
 
               <!-- Display Task List -->
               <ul v-if="task.tasks && task.tasks.length > 0" class="mt-2">
@@ -113,7 +103,14 @@ import {
   IonIcon,
 } from "@ionic/vue";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
-import { add, home, folderOpen, list, person, arrowBack } from "ionicons/icons";
+import {
+  add,
+  home,
+  folderOpen,
+  list,
+  person,
+  addCircleOutline,
+} from "ionicons/icons";
 import db from "@/firebase/init.js";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -149,7 +146,7 @@ export default defineComponent({
       folderOpen,
       list,
       person,
-      arrowBack,
+      addCircleOutline,
       tasks: [],
       userData: null,
     };

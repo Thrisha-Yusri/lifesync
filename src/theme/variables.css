@@ -111,9 +111,17 @@ ion-textarea {
 }
 
 .ios ion-icon {
-  font-size: 25px;
-  color: #3099b1;
+  font-size: var(--icon-size, 25px);
 }
+
+.small-icon {
+  --icon-size: 15px;
+}
+
+.large-icon {
+  --icon-size: 40px;
+}
+
 
 html, body {
   overscroll-behavior: none;

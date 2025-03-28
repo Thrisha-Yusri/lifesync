@@ -71,6 +71,11 @@ const routes = [
     name: 'editprofile',
     component: () => import('@/views/Editprofile.vue')
   },
+  {
+    path: '/calendar',
+    name: 'calendar',
+    component: () => import('@/views/Calendar.vue')
+  },
   
 
   {

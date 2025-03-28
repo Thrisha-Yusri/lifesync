@@ -2,18 +2,8 @@
   <ion-page>
     <BaseLayout
       ><template #header>
-        <ion-toolbar color="primary">
-          <ion-button
-           
-            shape="round"
-            fill="clear"
-            @click="goBack"
-            class="ml-2"
-          >
-            <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
-          </ion-button>
-
-          <ion-title class="text-xl">Life Sync</ion-title>
+        <ion-toolbar color="light">
+          <ion-title class="text-xl">Life-Sync</ion-title>
         </ion-toolbar>
       </template>
 
@@ -21,23 +11,23 @@
         <ion-content class="ion-padding">
           <!-- Header Section: Folders title on the left, Add button on the right -->
           <div class="flex justify-between items-center pb-6">
-          <ion-card-title class="card-title text-left text-l">Folders</ion-card-title>
-          <ion-button
-              class="h-8 px-4 text-sm flex items-center "
+            <ion-card-title class="card-title text-left text-l"
+              >Folders</ion-card-title
+            >
+            <ion-button
+              class="h-8 px-4 text-sm flex items-center"
               @click="addfolder()"
             >
               <ion-icon :icon="add" style="color: white"></ion-icon> Add Folder
-        
             </ion-button>
-        </div>
+          </div>
 
           <!-- Folder List -->
           <ion-grid>
             <ion-row class="gap-4">
               <ion-col v-for="folder in folders" :key="folder.id" size="auto">
                 <div
-                  class=" relative w-38 h-30 bg-gray-400 rounded-lg shadow-md p-6"
-                
+                  class="relative w-38 h-30 bg-gray-400 rounded-lg shadow-md p-6"
                 >
                   <div
                     class="absolute top-0 left-4 w-12 h-4 bg-zinc-100 rounded-b-lg"

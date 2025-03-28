@@ -2,18 +2,9 @@
   <ion-page>
     <BaseLayout>
       <template #header>
-        <ion-toolbar color="primary">
-          <ion-button
-           
-            shape="round"
-            fill="clear"
-            @click="goBack"
-            class="ml-2"
-          >
-            <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
-          </ion-button>
+        <ion-toolbar color="light">
 
-          <ion-title class="text-xl">Life Sync</ion-title>
+          <ion-title class="text-xl">Life-Sync</ion-title>
         </ion-toolbar>
       </template>
 
@@ -21,13 +12,6 @@
         <ion-content class="ion-padding">
           <!-- Profile Header -->
           <div class="flex flex-col items-center mt-6">
-            <ion-avatar class="w-24 h-24">
-              <!-- <img
-                :src="user.profileImage"
-                alt="Profile Picture"
-                class="rounded-full"
-              /> -->
-            </ion-avatar>
             <h1 class="text-black p-5" style="font-size: px; font-weight: 800">
               {{ userData?.name }}
             </h1>

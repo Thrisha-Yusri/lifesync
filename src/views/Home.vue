@@ -3,46 +3,91 @@
     <!-- Main Page Layout -->
     <BaseLayout>
       <template #header>
-        <ion-toolbar color="primary">
-          <ion-title class="text-xl">Life Sync</ion-title>
+        <ion-toolbar color="light">
+          <ion-title class="text-xl">Life-Sync</ion-title>
           <ion-buttons slot="end">
             <ion-button @click="logout()">
-              <ion-icon :icon="logOutOutline" color="light"></ion-icon>
+              <ion-icon :icon="logOutOutline" color="primary"></ion-icon>
             </ion-button>
           </ion-buttons>
         </ion-toolbar>
       </template>
 
       <template #content>
-        <p class="font-bold text-xl m-2">Hello, {{ userData?.name }}</p>
-        <ion-searchbar></ion-searchbar>
-        <!-- Calendar Section -->
-        <CustomCard title="Calendar">
-          <template #buttons>
-            <ion-icon
-              :icon="add"
-              size="large"
-              color="secondary"
-              @click="reminder()"
-            ></ion-icon>
-          </template>
-          <template #content>
-            <CustomCalendar :events="events" />
-          </template>
-        </CustomCard>
+        <!-- Profile card -->
+        <div class="flex p-4 bg-indigo-200 rounded-lg ">
+          <div class="max-w-1/4 px-3">
+            <ion-avatar>
+              <img :src="'https://picsum.photos/80/80?random='" alt="avatar" />
+            </ion-avatar>
+          </div>
+          <div class="max-w-3/4">
+            <div class="font-bold">Hello,{{ userData?.name }}</div>
+            <div class="text-xs text-gray-700">{{ userData?.email }}</div>
+          </div>
+        </div>
+
+        <!-- Events Card -->
+        <div class="my-2 p-4 bg-sky-100 rounded-lg">
+          <div class="flex justify-between w-full">
+            <div class="font-bold uppercase text-secondary">
+              Upcoming Events
+            </div>
+            <div>
+              <ion-icon :icon="calendarOutline" @click="$router.push('/calendar')" color="secondary"></ion-icon>
+            </div>
+          </div>
+          <div class="text-gray-500 italic text-center py-4 text-sm">
+            No events
+          </div>
+          <div class="flex text-sky-700 border-b border-sky-500/40 py-2 last:border-none">
+            <div class="w-1/4  text-center border-r border-sky-500/40 mr-3">
+              <div class="text-2xl font-bold">21</div>
+              <div class="uppercase text-sm font-bold">Aug</div>
+            </div>
+            <div>
+              <div class="font-semibold">Title</div>
+              <div>
+                <ion-icon
+                  :icon="location"
+                  color="danger"
+                  class="small-icon"
+                ></ion-icon
+                ><span class="pl-2">Location</span>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+
+        <!-- Folder Card -->
+        <div class="my-2 p-4">
+          <div class="flex justify-between w-full">
+            <div class="font-bold uppercase text-secondary">To-do list</div>
+            <div>
+              <ion-icon :icon="addCircleOutline" @click=addList() color="secondary"></ion-icon>
+            </div>
+          </div>
+          <div class="text-gray-500 italic text-center py-4 text-sm">
+            No existing list
+          </div>
+        </div>
 
         <!-- Folders Section -->
-        <div class="py-6">
+        <div class="py-2">
           <div class="flex justify-between items-center pr-2 pb-4">
             <div class="pb-2 font-bold text-xl">Folders</div>
             <ion-button
-  class="h-8 px-2 text-sm flex items-center justify-center space-x-1"
-  @click="addfolder()"
->
-  <ion-icon :icon="add" style="color: white;" class="text-lg"></ion-icon>
-  <span>Add Folder</span>
-</ion-button>
-
+              class="h-8 px-2 text-sm flex items-center justify-center space-x-1"
+              @click="addfolder()"
+            >
+              <ion-icon
+                :icon="add"
+                style="color: white"
+                class="text-lg"
+              ></ion-icon>
+              <span>Add Folder</span>
+            </ion-button>
           </div>
 
           <!-- Folder Grid -->
@@ -96,6 +141,7 @@
 <script>
 import { defineComponent, ref } from "vue";
 import {
+  IonAvatar,
   IonRouterOutlet,
   IonLabel,
   IonTabs,
@@ -112,7 +158,17 @@ import {
   IonSearchbar,
   IonButtons,
 } from "@ionic/vue";
-import { add, home, folderOpen, list, person, logOutOutline } from "ionicons/icons";
+import {
+  add,
+  home,
+  folderOpen,
+  list,
+  person,
+  logOutOutline,
+  calendarOutline,
+  location,
+  addCircleOutline,
+} from "ionicons/icons";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import CustomCard from "@/components/templates/CustomCard.vue";
 import CustomCalendar from "@/components/templates/CustomCalendar.vue";
@@ -123,6 +179,7 @@ import { getAuth } from "firebase/auth";
 export default defineComponent({
   name: "Home",
   components: {
+    IonAvatar,
     IonRouterOutlet,
     IonLabel,
     IonTabs,
@@ -168,6 +225,9 @@ export default defineComponent({
       events: [],
       userData: null,
       logOutOutline,
+      calendarOutline,
+      location,
+      addCircleOutline
     };
   },
 
@@ -185,13 +245,15 @@ export default defineComponent({
         friends: "",
       };
     },
-    reminder() {
-      this.$router.push("/reminder");
+    addreminder() {
+      this.$router.push("/calendar");
+    },
+    addList() {
+      this.$router.push("/todolistform");
     },
     addfolder() {
       this.$router.push("/folderform");
     },
-    
 
     async getEvents() {
       //inistialize firebase authentication
@@ -240,6 +302,10 @@ export default defineComponent({
       const minutes = String(date.getMinutes()).padStart(2, "0");
 
       return `${year}-${month}-${day} ${hours}:${minutes}`;
+    },
+    logout() {
+      localStorage.clear();
+      this.$router.push("/login");
     },
   },
 });

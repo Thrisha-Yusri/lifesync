@@ -24,6 +24,7 @@
                 slot="start"
                 :icon="person"
                 aria-hidden="true"
+                color="primary"
               ></ion-icon>
               <ion-input
                 label="Name"
@@ -35,7 +36,7 @@
               ></ion-input>
             </div>
             <div class="flex items-center space-x-2">
-              <ion-icon slot="start" :icon="mail" aria-hidden="true"></ion-icon>
+              <ion-icon slot="start" :icon="mail" aria-hidden="true" color="primary"></ion-icon>
               <ion-input
                 label="Email"
                 type="email"
@@ -50,6 +51,7 @@
                 slot="start"
                 :icon="lockClosed"
                 aria-hidden="true"
+                color="primary"
               ></ion-icon>
               <ion-input
                 label="Password"
