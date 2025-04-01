@@ -15,7 +15,7 @@
 
       <template #content>
         <!-- Profile card -->
-        <div class="flex p-4 bg-indigo-200 rounded-lg ">
+        <div class="flex p-4 bg-indigo-200 rounded-lg">
           <div class="max-w-1/4 px-3">
             <ion-avatar>
               <img :src="'https://picsum.photos/80/80?random='" alt="avatar" />
@@ -34,20 +34,26 @@
               Upcoming Events
             </div>
             <div>
-              <ion-icon :icon="calendarOutline" @click="$router.push('/calendar')" color="secondary"></ion-icon>
+              <ion-icon
+                :icon="calendarOutline"
+                @click="$router.push('/calendar')"
+                color="secondary"
+              ></ion-icon>
             </div>
           </div>
           <div class="text-gray-500 italic text-center py-4 text-sm">
             No events
           </div>
-          <div class="flex text-sky-700 border-b border-sky-500/40 py-2 last:border-none">
-            <div class="w-1/4  text-center border-r border-sky-500/40 mr-3">
+          <div
+            class="flex text-sky-700 border-b border-sky-500/40 py-2 last:border-none"
+          >
+            <div class="w-1/4 text-center border-r border-sky-500/40 mr-3">
               <div class="text-2xl font-bold">21</div>
               <div class="uppercase text-sm font-bold">Aug</div>
             </div>
             <div>
               <div class="font-semibold">Title</div>
-              <div>
+              <div class="flex">
                 <ion-icon
                   :icon="location"
                   color="danger"
@@ -56,25 +62,86 @@
                 ><span class="pl-2">Location</span>
               </div>
             </div>
+            <!-- kalau w-full semua gerak -->
+            <div class="justify-end flex items-center w-1/4">
+              <ion-icon :icon="eyeOutline" color="secondary"></ion-icon>
+            </div>
           </div>
-          
         </div>
 
-        <!-- Folder Card -->
+        <!-- Tasks List -->
         <div class="my-2 p-4">
           <div class="flex justify-between w-full">
             <div class="font-bold uppercase text-secondary">To-do list</div>
             <div>
-              <ion-icon :icon="addCircleOutline" @click=addList() color="secondary"></ion-icon>
+              <ion-icon
+                :icon="addCircleOutline"
+                @click="addList()"
+                color="secondary"
+              ></ion-icon>
             </div>
           </div>
-          <div class="text-gray-500 italic text-center py-4 text-sm">
-            No existing list
+
+          <div class="flex justify-center">
+            <div v-if="tasks.length > 0" class="w-full">
+              <div
+                v-for="(task, index) in tasks"
+                :key="index"
+                class="px-6 py-4 bg-amber-100 rounded-md mb-2 cursor-pointer"
+                @click="openTask(task)"
+              >
+                <div class="flex justify-between w-full">
+                  <strong class="text-lg">{{ task.title }}</strong>
+                  <div>
+                    <ion-icon :icon="eyeOutline" color="secondary"></ion-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Show message if no tasks -->
+            <div v-else class="text-gray-500 italic text-center py-4 text-sm">
+              No existing list
+            </div>
+
+            <ion-modal
+              :is-open="selectedTask !== null"
+              @didDismiss="closeTask"
+              class="custom-modal"
+            >
+              <div class="flex justify-center items-center h-full">
+                <div class="custom-card">
+                  <div>
+                    <div class="font-bold text-2xl">
+                      {{ selectedTask?.title }}
+                    </div>
+                    <ul
+                      v-if="selectedTask && selectedTask.tasks.length > 0"
+                      class="mt-2"
+                    >
+                      <li
+                        v-for="(t, i) in selectedTask.tasks"
+                        :key="i"
+                        class="flex items-center space-x-2"
+                      >
+                        <ion-checkbox v-model="t.completed"></ion-checkbox>
+                        <span :class="{ 'line-through': t.completed }">{{
+                          t.text
+                        }}</span>
+                      </li>
+                    </ul>
+                    <ion-button expand="full" class="mt-4" @click="closeTask"
+                      >Close</ion-button
+                    >
+                  </div>
+                </div>
+              </div>
+            </ion-modal>
           </div>
         </div>
 
         <!-- Folders Section -->
-        <div class="py-2">
+        <!-- <div class="py-2">
           <div class="flex justify-between items-center pr-2 pb-4">
             <div class="pb-2 font-bold text-xl">Folders</div>
             <ion-button
@@ -89,8 +156,6 @@
               <span>Add Folder</span>
             </ion-button>
           </div>
-
-          <!-- Folder Grid -->
           <div class="grid grid-cols-2 gap-2">
             <CustomCard
               class="w-[150px] h-[100px]"
@@ -105,7 +170,7 @@
               </template>
             </CustomCard>
           </div>
-        </div>
+        </div> -->
       </template>
 
       <template #footer>
@@ -157,7 +222,10 @@ import {
   IonButton,
   IonSearchbar,
   IonButtons,
+  IonCheckbox,
+  IonModal,
 } from "@ionic/vue";
+
 import {
   add,
   home,
@@ -168,6 +236,7 @@ import {
   calendarOutline,
   location,
   addCircleOutline,
+  eyeOutline,
 } from "ionicons/icons";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import CustomCard from "@/components/templates/CustomCard.vue";
@@ -193,15 +262,17 @@ export default defineComponent({
     IonIcon,
     IonPage,
     IonButton,
-    BaseLayout,
     CustomCard,
-    CustomCalendar,
+    BaseLayout,
     IonSearchbar,
     IonButtons,
+    IonCheckbox,
+    IonModal,
   },
 
   //run everytime this page is open
   ionViewDidEnter() {
+    this.getTasks();
     this.getEvents();
     this.userData = JSON.parse(localStorage.getItem("user"));
   },
@@ -227,7 +298,10 @@ export default defineComponent({
       logOutOutline,
       calendarOutline,
       location,
-      addCircleOutline
+      addCircleOutline,
+      tasks: [],
+      eyeOutline,
+      selectedTask: null,
     };
   },
 
@@ -293,6 +367,47 @@ export default defineComponent({
       }
     },
 
+    async getTasks() {
+      //inistialize firebase authentication
+      const auth = getAuth();
+      //get the user from local storage
+      let user = JSON.parse(localStorage.getItem("user"));
+      //get the events from the database
+      const queryRef = query(
+        //get the collection of events
+        collection(db, "tasks"),
+        //get the events where the userId is equal to the user id
+        where("userId", "==", user.uid)
+      );
+
+      //get the documents from the query
+      const docSnap = await getDocs(queryRef);
+
+      //if the document is not empty
+      if (!docSnap.empty) {
+        //map the documents to the data
+        let result = [];
+        //get the data from the documents
+        result = docSnap.docs.map((doc) => doc.data());
+
+        const updatedData = result.map((item, index) => ({
+          ...item,
+          id: index,
+        }));
+        //set the events to the result
+        this.tasks = updatedData;
+      } else {
+        console.log("No such tasks!");
+      }
+    },
+
+    openTask(task) {
+      this.selectedTask = task;
+    },
+    closeTask() {
+      this.selectedTask = null;
+    },
+
     formatDate(isoString) {
       const date = new Date(isoString);
       const year = date.getFullYear();
@@ -317,5 +432,22 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   height: 100%;
+}
+
+.line-through {
+  text-decoration: line-through;
+}
+.custom-modal::part(content) {
+  background: transparent; /* Makes the modal background transparent */
+  box-shadow: none; /* Removes any default shadow */
+}
+
+.custom-card {
+  background-color: #fef3c7; /* Amber-100 */
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 </style>

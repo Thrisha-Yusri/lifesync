@@ -3,93 +3,98 @@
     <BaseLayout>
       <template #header>
         <ion-toolbar color="light">
-
           <ion-title class="text-xl">Life-Sync</ion-title>
         </ion-toolbar>
       </template>
 
       <template #content>
-        <ion-content class="ion-padding">
-          <!-- Profile Header -->
-          <div class="flex flex-col items-center mt-6">
-            <h1 class="text-black p-5" style="font-size: px; font-weight: 800">
-              {{ userData?.name }}
-            </h1>
-            <p class="text-gray-500">{{ userData?.email }}</p>
+        <!-- Profile Header -->
+        <div class="flex p-4 bg-rose-100 rounded-lg">
+          <div class="max-w-1/4 px-3">
+            <ion-avatar>
+              <img :src="'https://picsum.photos/80/80?random='" alt="avatar" />
+            </ion-avatar>
           </div>
-
-          <!-- Profile Details -->
-          <ion-card class="mt-6">
-            <ion-card-content>
-              <ion-list>
-                <ion-item>
-                  <ion-label>Name</ion-label>
-                  <ion-text>{{ userData?.name }}</ion-text>
-                </ion-item>
-                <ion-item>
-                  <ion-label>Email</ion-label>
-                  <ion-text>{{ userData?.email }}</ion-text>
-                </ion-item>
-                <ion-item>
-                  <ion-label>Password</ion-label>
-                  <ion-button
-                    fill="outline"
-                    color="warning"
-                    @click="editPassword"
-                    >Edit Password</ion-button
-                  >
-                </ion-item>
-              </ion-list>
-            </ion-card-content>
-          </ion-card>
-
-<!--        
-          <ion-card class="mt-4 p-6">
-            <ion-card-header>
-              <ion-card-title>My Members</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-card-content>
-                <ion-list>
-                  
-                  <div class="flex items-center space-x-1 mb-4">
-                    <ion-input
-                      v-model="newMember"
-                      class="flex-1 p-2"
-                      label="Member Name"
-                      label-placement="floating"
-                      placeholder="Enter friend's name"
-                    ></ion-input>
-                    <ion-button @click="addMember" color="primary"
-                      >Add</ion-button
-                    >
-                  </div>
-
-               
-                  <div v-if="members.length > 0">
-                    <ion-item v-for="(member, index) in members" :key="index">
-                      <ion-label>{{ member.name }}</ion-label>
-                      <ion-button
-                        fill="clear"
-                        color="danger"
-                        @click="removeMember(index)"
-                        >Remove</ion-button
-                      >
-                    </ion-item>
-                  </div>
-                </ion-list>
-              </ion-card-content>
-            </ion-card-content>
-          </ion-card> -->
-
-          <!-- Edit Profile Button -->
-          <div class="flex justify-center mt-4">
-            <ion-button color="primary" @click="editProfile"
-              >Edit Profile</ion-button
-            >
+          <div class="max-w-3/4">
+            <ion-card-title class="card-title text-l">{{
+              userData?.name
+            }}</ion-card-title>
+            <div class="text-xs text-gray-700">
+              {{ userData?.email }}
+            </div>
           </div>
-        </ion-content></template
-      >
+        </div>
+
+        <!-- Profile Details -->
+        <ion-card class="mt-2">
+          <ion-card-content>
+            <ion-list>
+              <ion-item>
+                <ion-label>Name</ion-label>
+                <ion-text>{{ userData?.name }}</ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-label>Email</ion-label>
+                <ion-text>{{ userData?.email }}</ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-label>Password</ion-label>
+                <ion-button
+                  fill="outline"
+                  color="secondary"
+                  @click="editPassword"
+                  >Edit Password</ion-button
+                >
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="mt-2 p-6">
+          <ion-card-header>
+            <ion-card-title class="card-title pb-4">My Members</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div class="flex items-center space-x-1 mb-4">
+              <ion-input
+                v-model="newMember"
+                class="flex-1 p-2"
+                label="Member Name"
+                label-placement="floating"
+                placeholder="Enter friend's name"
+              ></ion-input>
+              <ion-button @click="addMember" color="primary">Add</ion-button>
+            </div>
+
+            <ion-list>
+              <ion-item v-for="(member, index) in members" :key="index">
+                <ion-avatar aria-hidden="true" slot="start">
+                  <img
+                    alt=""
+                    src="https://ionicframework.com/docs/img/demos/avatar.svg"
+                  />
+                </ion-avatar>
+                <ion-label>{{ member.name }}</ion-label>
+                <ion-button
+                  fill="clear"
+                  color="danger"
+                  @click="removeMember(index)"
+                >
+                  <ion-icon :icon="trash"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Edit Profile Button -->
+        <div class="flex justify-center mt-4">
+          <ion-button color="primary" @click="editProfile()"
+            >Edit Profile</ion-button
+          >
+        </div>
+      </template>
 
       <template #footer>
         <ion-tabs>
@@ -147,7 +152,14 @@ import {
   IonButton,
 } from "@ionic/vue";
 
-import { home, folderOpen, list, person, arrowBack } from "ionicons/icons";
+import {
+  home,
+  folderOpen,
+  list,
+  person,
+  arrowBack,
+  trash,
+} from "ionicons/icons";
 import db from "@/firebase/init.js";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -185,70 +197,78 @@ export default defineComponent({
 
   data() {
     return {
-      users: [], 
+      users: [],
       home,
       folderOpen,
       list,
       person,
       arrowBack,
       userData: null,
+      members: [
+        { name: "Huey" },
+        { name: "Dewey" },
+        { name: "Louie" },
+        { name: "Fooie" },
+      ],
+      trash,
     };
   },
   methods: {
-  async getUser() {
-    // Initialize Firebase authentication
-    const auth = getAuth();
-    // Get the user from local storage
-    let user = JSON.parse(localStorage.getItem("user"));
-    // Get the events from the database
-    const queryRef = query(
-      // Get the collection of events
-      collection(db, "users"),
-      // Get the events where the userId is equal to the user id
-      where("userId", "==", user.uid)
-    );
+    removeMember(index) {
+      this.members.splice(index, 1);
+    },
 
-    // Get the documents from the query
-    const docSnap = await getDocs(queryRef);
+    async getUser() {
+      // Initialize Firebase authentication
+      const auth = getAuth();
+      // Get the user from local storage
+      let user = JSON.parse(localStorage.getItem("user"));
+      // Get the events from the database
+      const queryRef = query(
+        // Get the collection of events
+        collection(db, "users"),
+        // Get the events where the userId is equal to the user id
+        where("userId", "==", user.uid)
+      );
 
-    // If the document is not empty
-    if (!docSnap.empty) {
-      // Map the documents to the data
-      let result = [];
-      result = docSnap.docs.map((doc) => doc.data());
+      // Get the documents from the query
+      const docSnap = await getDocs(queryRef);
 
-      const updatedData = result.map((item, index) => ({
-        ...item,
-        id: index,
-      }));
-      this.tasks = updatedData;
-    } else {
-      console.log("No such User!");
-    }
+      // If the document is not empty
+      if (!docSnap.empty) {
+        // Map the documents to the data
+        let result = [];
+        result = docSnap.docs.map((doc) => doc.data());
+
+        const updatedData = result.map((item, index) => ({
+          ...item,
+          id: index,
+        }));
+        this.tasks = updatedData;
+      } else {
+        console.log("No such User!");
+      }
+    },
+
+    editPassword() {
+      console.log("Edit Password clicked!");
+      // Add your logic here for password editing
+    },
+
+    editProfile() {
+      this.$router.push("/editprofile");
+    },
   },
-
-  editPassword() {
-    console.log("Edit Password clicked!");
-    // Add your logic here for password editing
-  },
-
-  editProfile() {
-    console.log("Edit Profile clicked!");
-    // Add your logic here for profile editing
-  },
-},
-
 });
 </script>
 
-<style >
+<style>
 /* Avatar styling */
 ion-avatar {
-  width: 96px;
-  height: 96px;
-  border: 3px solid #000000; /* Blue border */
-  padding: 3px; /* Optional: Adds spacing between image and border */
-  border-radius: 50%; /* Ensures it's always circular */
+  width: 60px; /* Reduce the width */
+  height: 60px; /* Reduce the height */
+  padding: 3px; /* Optional: Adjust spacing */
+  border-radius: 50%; /* Keeps it circular */
 }
 
 /* Profile name styling */

@@ -24,6 +24,8 @@
         </div>
         <CustomCalendar :events="events" />
       </template>
+
+      
     </BaseLayout>
   </ion-page>
 </template>

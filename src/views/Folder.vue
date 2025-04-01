@@ -8,29 +8,28 @@
       </template>
 
       <template #content>
-        <ion-content class="ion-padding">
-          <!-- Header Section: Folders title on the left, Add button on the right -->
-          <div class="flex justify-between items-center pb-6">
-            <ion-card-title class="card-title text-left text-l"
-              >Folders</ion-card-title
-            >
-            <ion-button
-              class="h-8 px-4 text-sm flex items-center"
+        <div class="flex justify-between items-center p-4">
+          <ion-card-title class="card-title text-left text-l"
+            >My Folder</ion-card-title
+          >
+          <div class="flex justify-end pt-2">
+            <ion-icon
+              :icon="addCircleOutline"
+              color="secondary"
               @click="addfolder()"
-            >
-              <ion-icon :icon="add" style="color: white"></ion-icon> Add Folder
-            </ion-button>
+            ></ion-icon>
           </div>
+        </div>
 
           <!-- Folder List -->
           <ion-grid>
-            <ion-row class="gap-4">
+            <ion-row class="gap-5 px-4">
               <ion-col v-for="folder in folders" :key="folder.id" size="auto">
                 <div
-                  class="relative w-38 h-30 bg-gray-400 rounded-lg shadow-md p-6"
+                  class="relative w-38 h-30 bg-sky-200 rounded-lg shadow-md p-6"
                 >
                   <div
-                    class="absolute top-0 left-4 w-12 h-4 bg-zinc-100 rounded-b-lg"
+                    class="absolute top-0 left-4 w-12 h-4 bg-pink-200 rounded-b-lg"
                   ></div>
                   <p class="text-center text-black font-medium text-lg mt-6">
                     {{ folder.title }}
@@ -39,7 +38,7 @@
               </ion-col>
             </ion-row>
           </ion-grid>
-        </ion-content>
+        
       </template>
 
       <template #footer>
@@ -93,7 +92,7 @@ import {
   IonCardTitle,
 } from "@ionic/vue";
 
-import { add, home, folderOpen, list, person, arrowBack } from "ionicons/icons";
+import { addCircleOutline, home, folderOpen, list, person, arrowBack } from "ionicons/icons";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 
 export default defineComponent({
@@ -126,7 +125,7 @@ export default defineComponent({
 
     return {
       folders,
-      add,
+      addCircleOutline,
       home,
       folderOpen,
       list,

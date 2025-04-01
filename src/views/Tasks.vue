@@ -3,7 +3,7 @@
     <BaseLayout>
       <template #header>
         <ion-toolbar color="light">
-          <ion-title class="text-l">Life-Sync</ion-title>
+          <ion-title class="text-xl">Life-Sync</ion-title>
         </ion-toolbar>
       </template>
 
@@ -23,34 +23,65 @@
         </div>
 
         <!-- Display fetched tasks -->
-        <div class=" flex justify-center">
-          <!-- Display Tasks -->
-          <div v-if="tasks.length > 0" class="w-full">
-            <div
-              v-for="(task, index) in tasks"
-              :key="index"
-              class="px-6 py-4 bg-amber-100 rounded-md mb-2"
-            >
-              <strong class="text-lg">{{ task.title }}</strong>
+        <div class="my-2">
+          
 
-              <!-- Display Task List -->
-              <ul v-if="task.tasks && task.tasks.length > 0" class="mt-2">
-                <li
-                  v-for="(t, i) in task.tasks"
-                  :key="i"
-                  class="flex items-center space-x-2"
-                >
-                  <ion-checkbox v-model="t.completed"></ion-checkbox>
-                  <span :class="{ 'line-through': t.completed }">{{
-                    t.text
-                  }}</span>
-                </li>
-              </ul>
+          <div class="flex justify-center">
+            <div v-if="tasks.length > 0" class="w-full">
+              <div
+                v-for="(task, index) in tasks"
+                :key="index"
+                class="px-6 py-4 bg-amber-100 rounded-md mb-2 cursor-pointer"
+                @click="openTask(task)"
+              >
+                <div class="flex justify-between w-full">
+                  <strong class="text-lg">{{ task.title }}</strong>
+                  <div>
+                    <ion-icon :icon="eyeOutline" color="secondary"></ion-icon>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <!-- Show message if no tasks -->
-          <p v-else class="text-center text-gray-500 p-4">No tasks found.</p>
+            <!-- Show message if no tasks -->
+            <div v-else class="text-gray-500 italic text-center py-4 text-sm">
+              No existing list
+            </div>
+
+            <ion-modal
+              :is-open="selectedTask !== null"
+              @didDismiss="closeTask"
+              class="custom-modal"
+            >
+              <div class="flex justify-center items-center h-full">
+                <div class="custom-card">
+                  <div>
+                    <div class="font-bold text-2xl">
+                      {{ selectedTask?.title }}
+                    </div>
+                    <ul
+                      v-if="selectedTask && selectedTask.tasks.length > 0"
+                      class="mt-2"
+                    >
+                      <li
+                        v-for="(t, i) in selectedTask.tasks"
+                        :key="i"
+                        class="flex items-center space-x-2"
+                      >
+                        <ion-checkbox v-model="t.completed"></ion-checkbox>
+                        <span :class="{ 'line-through': t.completed }">{{
+                          t.text
+                        }}</span>
+                      </li>
+                    </ul>
+                    <ion-button expand="full" class="mt-4" @click="closeTask"
+                      >Close</ion-button
+                    >
+                  </div>
+                </div>
+              </div>
+            </ion-modal>
+          </div>
         </div>
       </template>
 
@@ -101,6 +132,7 @@ import {
   IonLabel,
   IonCheckbox,
   IonIcon,
+  IonModal,
 } from "@ionic/vue";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import {
@@ -110,6 +142,7 @@ import {
   list,
   person,
   addCircleOutline,
+  eyeOutline,
 } from "ionicons/icons";
 import db from "@/firebase/init.js";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -132,6 +165,7 @@ export default defineComponent({
     IonLabel,
     IonCheckbox,
     BaseLayout,
+    IonModal,
   },
 
   ionViewDidEnter() {
@@ -149,6 +183,8 @@ export default defineComponent({
       addCircleOutline,
       tasks: [],
       userData: null,
+      eyeOutline,
+      selectedTask: null,
     };
   },
 
@@ -190,6 +226,12 @@ export default defineComponent({
         console.log("No such tasks!");
       }
     },
+    openTask(task) {
+      this.selectedTask = task;
+    },
+    closeTask() {
+      this.selectedTask = null;
+    },
   },
 });
 </script>
@@ -197,5 +239,19 @@ export default defineComponent({
 <style scoped>
 .line-through {
   text-decoration: line-through;
+}
+.custom-modal::part(content) {
+  background: transparent; /* Makes the modal background transparent */
+  box-shadow: none; /* Removes any default shadow */
+}
+
+
+.custom-card {
+  background-color: #fef3c7; /* Amber-100 */
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 </style>
