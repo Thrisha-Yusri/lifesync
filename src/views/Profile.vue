@@ -9,24 +9,15 @@
 
       <template #content>
         <!-- Profile Header -->
-        <div class="flex p-4 bg-rose-100 rounded-lg">
-          <div class="max-w-1/4 px-3">
-            <ion-avatar>
-              <img :src="'https://picsum.photos/80/80?random='" alt="avatar" />
-            </ion-avatar>
-          </div>
-          <div class="max-w-3/4">
-            <ion-card-title class="card-title text-l">{{
-              userData?.name
-            }}</ion-card-title>
-            <div class="text-xs text-gray-700">
-              {{ userData?.email }}
-            </div>
-          </div>
+
+        <div class="flex justify-center">
+          <ion-avatar class="custom-avatar" >
+            <img :src="'https://picsum.photos/80/80?random='" alt="avatar" />
+          </ion-avatar>
         </div>
 
         <!-- Profile Details -->
-        <ion-card class="mt-2">
+        <ion-card class="mt-2 bg-rose-100">
           <ion-card-content>
             <ion-list>
               <ion-item>
@@ -81,7 +72,7 @@
                   color="danger"
                   @click="removeMember(index)"
                 >
-                  <ion-icon :icon="trash"></ion-icon>
+                  <ion-icon :icon="trashOutline"></ion-icon>
                 </ion-button>
               </ion-item>
             </ion-list>
@@ -158,7 +149,7 @@ import {
   list,
   person,
   arrowBack,
-  trash,
+  trashOutline,
 } from "ionicons/icons";
 import db from "@/firebase/init.js";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -210,7 +201,7 @@ export default defineComponent({
         { name: "Louie" },
         { name: "Fooie" },
       ],
-      trash,
+      trashOutline,
     };
   },
   methods: {
@@ -279,5 +270,10 @@ ion-avatar {
 /* Profile email styling */
 .text-gray-500 {
   color: gray;
+}
+.custom-avatar {
+  --size: 120px; /* Adjust size as needed */
+  width: var(--size);
+  height: var(--size);
 }
 </style>

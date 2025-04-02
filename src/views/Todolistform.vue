@@ -24,6 +24,7 @@
         </ion-card-header>
 
         <ion-card-content>
+          
           <div class="mb-4">
             <ion-input
               v-model="dataObj.title"

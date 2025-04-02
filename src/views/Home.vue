@@ -462,7 +462,7 @@ export default defineComponent({
 }
 
 .custom-card {
-  background-color: #fef3c7; /* Amber-100 */
+  background-color: #f4e8ba; /* Amber-100 */
   padding: 20px;
   border-radius: 12px;
   width: 90%;

@@ -112,7 +112,7 @@
           <ion-icon
             id="present-alert"
             slot="icon-only"
-            :icon="trash"
+            :icon="trashOutline"
             color="danger"
           ></ion-icon>
 
@@ -193,7 +193,7 @@ import {
   IonCol,
   IonIcon,
 } from "@ionic/vue";
-import { arrowBack, trash, create } from "ionicons/icons";
+import { arrowBack, trashOutline, create } from "ionicons/icons";
 
 export default {
   components: {
@@ -253,7 +253,7 @@ export default {
         location: "",
       },
       editMode: false,
-      trash,
+      trashOutline,
       create,
       alertButtons: [
         {

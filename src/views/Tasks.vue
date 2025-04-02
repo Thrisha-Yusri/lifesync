@@ -24,19 +24,28 @@
 
         <!-- Display fetched tasks -->
         <div class="my-2">
-
           <div class="flex justify-center">
             <div v-if="tasks.length > 0" class="w-full">
               <div
                 v-for="(task, index) in tasks"
                 :key="index"
                 class="px-6 py-4 bg-amber-100 rounded-md mb-2 cursor-pointer"
-                @click="openTask(task)"
               >
                 <div class="flex justify-between w-full">
-                  <strong class="text-lg">{{ task.title }}</strong>
+                  <strong class="text-lg">{{ task.title}}</strong>
                   <div>
-                    <ion-icon :icon="eyeOutline" color="secondary"></ion-icon>
+                    <ion-icon
+                      class="pr-3"
+                      :icon="eyeOutline"
+                      color="secondary"
+                      @click="openTask(task)"
+                    ></ion-icon>
+                    <ion-icon
+                      id="present-alert"
+                      :icon="trashOutline"
+                      color="danger"
+                      @click="deleteId = task.id"
+                    ></ion-icon>
                   </div>
                 </div>
               </div>
@@ -82,6 +91,12 @@
             </ion-modal>
           </div>
         </div>
+        <ion-alert
+          v-if="tasks.length > 0"
+          trigger="present-alert"
+          header="Do you want to delete this task?"
+          :buttons="alertButtons"
+        ></ion-alert>
       </template>
 
       <template #footer>
@@ -117,6 +132,7 @@
 <script>
 import { defineComponent, ref } from "vue";
 import {
+  IonAlert,
   IonTabs,
   IonTabBar,
   IonTabButton,
@@ -142,13 +158,23 @@ import {
   person,
   addCircleOutline,
   eyeOutline,
+  trashOutline,
 } from "ionicons/icons";
 import db from "@/firebase/init.js";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  getDoc,
+  query,
+  where,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 export default defineComponent({
   components: {
+    IonAlert,
     IonTabs,
     IonTabBar,
     IonTabButton,
@@ -169,6 +195,7 @@ export default defineComponent({
 
   ionViewDidEnter() {
     this.getTasks();
+    this.deleteId=null;
     this.userData = JSON.parse(localStorage.getItem("user"));
   },
 
@@ -184,6 +211,22 @@ export default defineComponent({
       userData: null,
       eyeOutline,
       selectedTask: null,
+      trashOutline,
+      deleteId: null,
+      alertButtons: [
+        {
+          text: "No",
+          role: "cancel",
+          handler: () => {},
+        },
+        {
+          text: "Yes",
+          role: "confirm",
+          handler: () => {
+            this.deleteTasks(this.deleteId);
+          },
+        },
+      ],
     };
   },
 
@@ -213,16 +256,29 @@ export default defineComponent({
         //map the documents to the data
         let result = [];
         //get the data from the documents
-        result = docSnap.docs.map((doc) => doc.data());
+        result = docSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
 
-        const updatedData = result.map((item, index) => ({
-          ...item,
-          id: index,
-        }));
         //set the events to the result
-        this.tasks = updatedData;
+        this.tasks = result;
       } else {
         console.log("No such tasks!");
+      }
+    },
+
+    async deleteTasks(taskId) {
+      console.log(taskId);
+
+      try {
+        const docRef = doc(db, "tasks", taskId); // Reference to the document
+
+        await deleteDoc(docRef); // Delete the document
+
+        this.getTasks();
+
+        this.$toast("Successfully deleted!", 3000, "success");
+       
+      } catch (error) {
+        this.$toast("Failed to delete!", 3000, "danger");
       }
     },
     openTask(task) {
@@ -244,9 +300,8 @@ export default defineComponent({
   box-shadow: none; /* Removes any default shadow */
 }
 
-
 .custom-card {
-  background-color: #fef3c7; /* Amber-100 */
+  background-color: #f4e8ba; /* Amber-100 */
   padding: 20px;
   border-radius: 12px;
   width: 90%;
