@@ -24,7 +24,6 @@
 
         <!-- Display fetched tasks -->
         <div class="my-2">
-          
 
           <div class="flex justify-center">
             <div v-if="tasks.length > 0" class="w-full">

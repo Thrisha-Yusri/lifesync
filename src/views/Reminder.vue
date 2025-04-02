@@ -2,119 +2,175 @@
   <ion-page>
     <ion-header>
       <ion-toolbar color="primary">
-          <ion-button
-           
-            shape="round"
-            fill="clear"
-            class="ml-2"
-          >
-            <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
-          </ion-button>
-
-          <ion-title class="text-xl">Reminder</ion-title>
-        </ion-toolbar>
+        <ion-button shape="round" fill="clear" class="ml-2">
+          <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
+        </ion-button>
+        <ion-title class="text-xl">Reminder</ion-title>
+      </ion-toolbar>
     </ion-header>
 
     <ion-content color="light">
-      <ion-card class="ion-padding">
-        <!-- Card Header -->
-        <ion-card-header class="center-header">
-          <ion-card-title class="card-title text-lg p-4"
-            >Event Details</ion-card-title
+      <!-- Card Header -->
+      <ion-card-header class="center-header">
+        <ion-card-title class="card-title text-lg p-4"
+          >Event Details</ion-card-title
+        >
+      </ion-card-header>
+
+      <ion-card-content v-if="editMode">
+        <!-- Reminder Title Input -->
+        <div class="mb-4">
+          <ion-input
+            class="block w-full p-2"
+            label="Title"
+            placeholder="Enter title"
+            label-placement="floating"
+            v-model="dataObj.title"
+          ></ion-input>
+        </div>
+
+        <div class="mb-4">
+          <ion-input
+            class="block w-full p-2"
+            label="With"
+            placeholder="Enter name"
+            label-placement="floating"
+            v-model="dataObj.with"
+          ></ion-input>
+        </div>
+        <div class="mb-4">
+          <ion-input
+            class="block w-full p-2"
+            label="Location"
+            placeholder="Enter location"
+            label-placement="floating"
+            v-model="dataObj.location"
+          ></ion-input>
+        </div>
+
+        <div class="mb-4">
+          <ion-textarea
+            autoGrow
+            label="Description"
+            label-placement="floating"
+            placeholder="Enter description"
+            rows="10"
+            v-model="dataObj.description"
+          ></ion-textarea>
+        </div>
+
+        <div class="border border-gray-300 rounded-lg px-4 py-2 mb-4">
+          <div class="text-gray-500 pb-2 text-xs">Start Date & Time</div>
+          <ion-datetime-button datetime="datetime1"></ion-datetime-button>
+          <ion-modal :keep-contents-mounted="true">
+            <ion-datetime
+              id="datetime1"
+              v-model="dataObj.time.start"
+            ></ion-datetime>
+          </ion-modal>
+        </div>
+
+        <div class="border border-gray-300 rounded-lg px-4 py-2">
+          <div class="text-gray-500 pb-2 text-xs">End Date & Time</div>
+          <ion-datetime-button datetime="datetime2"></ion-datetime-button>
+          <ion-modal :keep-contents-mounted="true">
+            <ion-datetime
+              id="datetime2"
+              v-model="dataObj.time.end"
+            ></ion-datetime>
+          </ion-modal>
+        </div>
+
+        <div class="flex justify-between mt-4">
+          <ion-button
+            fill="solid"
+            color="danger"
+            class="flex-1 mx-1"
+            @click="cancelReminder()"
+            >Cancel</ion-button
           >
-        </ion-card-header>
+          <ion-button
+            v-if="!$route.query.id"
+            fill="solid"
+            color="primary"
+            class="flex-1 mx-1"
+            @click="saverReminder()"
+            >Submit</ion-button
+          >
+          <ion-button
+            v-else
+            fill="solid"
+            color="primary"
+            class="flex-1 mx-1"
+            @click="editReminder()"
+            >Save</ion-button
+          >
+        </div>
+      </ion-card-content>
+      <ion-card-content v-else>
+        <div class="flex justify-end">
+          <ion-icon
+            id="present-alert"
+            slot="icon-only"
+            :icon="trash"
+            color="danger"
+          ></ion-icon>
 
-        <ion-card-content>
-          <!-- Reminder Title Input -->
-          <div class="mb-4">
-            <ion-input
-              class="block w-full p-2"
-              label="Title"
-              placeholder="Enter title"
-              label-placement="floating"
-              v-model="dataObj.title"
-            ></ion-input>
+          <ion-icon
+            slot="icon-only"
+            :icon="create"
+            color="secondary"
+            @click="editMode = true"
+          ></ion-icon>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <div class="font-bold">Title</div>
+            <div>{{ dataObj.title }}</div>
           </div>
-
-          <div class="mb-4">
-            <ion-input
-              class="block w-full p-2"
-              label="With"
-              placeholder="Enter name"
-              label-placement="floating"
-              v-model="dataObj.with"
-            ></ion-input>
+          <div>
+            <div class="font-bold">With</div>
+            <div>{{ dataObj.with }}</div>
           </div>
-          <div class="mb-4">
-            <ion-input
-              class="block w-full p-2"
-              label="Location"
-              placeholder="Enter location"
-              label-placement="floating"
-              v-model="dataObj.location"
-            ></ion-input>
+          <div>
+            <div class="font-bold">Location</div>
+            <div>{{ dataObj.location }}</div>
           </div>
-
-          <div class="mb-4">
-            <ion-textarea
-              autoGrow
-              label="Description"
-              label-placement="floating"
-              placeholder="Enter description"
-              rows="10"
-              v-model="dataObj.description"
-            ></ion-textarea>
+          <div>
+            <div class="font-bold">Description</div>
+            <div>{{ dataObj.description }}</div>
           </div>
-
-          <div class="border border-gray-300 rounded-lg px-4 py-2 mb-4">
-            <div class="text-gray-500 pb-2 text-xs">Start Date & Time</div>
-            <ion-datetime-button datetime="datetime1"></ion-datetime-button>
-            <ion-modal :keep-contents-mounted="true">
-              <ion-datetime
-                id="datetime1"
-                v-model="dataObj.time.start"
-              ></ion-datetime>
-            </ion-modal>
+          <div>
+            <div class="font-bold">Start Date & Time</div>
+            <div>{{ formatDate(dataObj.time.start) }}</div>
           </div>
-
-          <div class="border border-gray-300 rounded-lg px-4 py-2">
-            <div class="text-gray-500 pb-2 text-xs">End Date & Time</div>
-            <ion-datetime-button datetime="datetime2"></ion-datetime-button>
-            <ion-modal :keep-contents-mounted="true">
-              <ion-datetime
-                id="datetime2"
-                v-model="dataObj.time.end"
-              ></ion-datetime>
-            </ion-modal>
+          <div>
+            <div class="font-bold">End Date & Time</div>
+            <div>{{ formatDate(dataObj.time.end) }}</div>
           </div>
-
-          <div class="flex justify-between mt-4">
-            <ion-button
-              fill="solid"
-              color="danger"
-              class="flex-1 mx-1"
-              @click="cancelReminder()"
-              >Cancel</ion-button
-            >
-            <ion-button
-              fill="solid"
-              color="primary"
-              class="flex-1 mx-1"
-              @click="saverReminder()"
-              >Save</ion-button
-            >
-          </div>
-        </ion-card-content>
-      </ion-card>
+        </div> </ion-card-content
+      ><ion-alert
+        trigger="present-alert"
+        header="Do you want to delete this event?"
+        :buttons="alertButtons"
+      ></ion-alert>
     </ion-content>
   </ion-page>
 </template>
 
 <script>
 import db from "@/firebase/init.js";
-import { collection, addDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDoc,
+  doc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import {
+  IonAlert,
   IonDatetimeButton,
   IonModal,
   IonTextarea,
@@ -137,10 +193,11 @@ import {
   IonCol,
   IonIcon,
 } from "@ionic/vue";
-import { arrowBack } from "ionicons/icons";
+import { arrowBack, trash, create } from "ionicons/icons";
 
 export default {
   components: {
+    IonAlert,
     IonDatetimeButton,
     IonModal,
     IonTextarea,
@@ -164,6 +221,24 @@ export default {
     IonIcon,
   },
 
+  ionViewDidEnter() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
+    if (this.$route.query.id) {
+      this.getDetails();
+    } else {
+      this.editMode = true;
+      this.dataObj = {
+        title: "",
+        with: "",
+        description: "",
+        time: {
+          start: new Date().toISOString(),
+          end: new Date().toISOString(),
+        },
+        location: "",
+      };
+    }
+  },
   data() {
     return {
       arrowBack,
@@ -177,13 +252,82 @@ export default {
         },
         location: "",
       },
+      editMode: false,
+      trash,
+      create,
+      alertButtons: [
+        {
+          text: "No",
+          role: "cancel",
+          handler: () => {},
+        },
+        {
+          text: "Yes",
+          role: "confirm",
+          handler: () => {
+            this.deleteReminder();
+          },
+        },
+      ],
     };
   },
 
   methods: {
     cancelReminder() {
-      console.log("Cancelled");
+      if (this.$route.query.id) {
+        this.getDetails();
+        this.editMode = false;
+      } else {
+        this.$router.push("/calendar");
+      }
     },
+    async deleteReminder() {
+      try {
+        const docId = this.$route.query.id; // Get document ID from query params
+        if (!docId) {
+          console.error("No document ID provided");
+          return;
+        }
+
+        const docRef = doc(db, "events", docId); // Reference to the document
+
+        await deleteDoc(docRef); // Delete the document
+
+        this.$toast("Successfully deleted!", 3000, "success");
+        this.$router.push("/home")
+      } catch (error) {
+        this.$toast("Failed to delete!", 3000, "danger");
+      }
+    },
+    async editReminder() {
+      try {
+        const docId = this.$route.query.id; // Get document ID from query params
+        const docRef = doc(db, "events", docId); // Reference to the document
+
+        await updateDoc(docRef, this.dataObj); // Update document with new data
+
+        this.$toast("Successfully Updated!", 3000, "success");
+        this.editMode = false;
+        this.getDetails();
+      } catch (error) {
+        this.$toast("Unsuccessfully Updated!", 3000, "danger");
+      }
+    },
+
+    async getDetails() {
+      //inistialize firebase authentication
+      const auth = getAuth();
+      const docId = this.$route.query.id; // Get the ID from the route query
+      const docRef = doc(db, "events", docId); // Reference to the document
+      const docSnap = await getDoc(docRef); // Fetch the document
+
+      if (docSnap.exists()) {
+        this.dataObj = docSnap.data();
+      } else {
+        console.log("No such document!");
+      }
+    },
+
     async saverReminder() {
       try {
         const auth = getAuth();
@@ -203,6 +347,20 @@ export default {
         console.log(error);
         this.$toast("Error!", 3000, "danger");
       }
+    },
+    formatDate(isoString) {
+      const date = new Date(isoString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+      const day = String(date.getDate()).padStart(2, "0");
+
+      let hours = date.getHours();
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const ampm = hours >= 12 ? "PM" : "AM";
+
+      hours = hours % 12 || 12; // Convert 0 (midnight) and 12 (noon) correctly
+
+      return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
     },
   },
 };

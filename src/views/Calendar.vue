@@ -40,6 +40,7 @@ import {
   IonIcon,
   IonPage,
   IonCard,
+  IonCardTitle,
 } from "@ionic/vue";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import CustomCalendar from "@/components/templates/CustomCalendar.vue";
@@ -59,6 +60,7 @@ export default defineComponent({
     IonPage,
     BaseLayout,
     CustomCalendar,
+    IonCardTitle,
   },
 
   //run everytime this page is open

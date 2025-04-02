@@ -41,31 +41,48 @@
               ></ion-icon>
             </div>
           </div>
-          <div class="text-gray-500 italic text-center py-4 text-sm">
-            No events
-          </div>
           <div
+            v-if="events.length > 0"
+            v-for="(item, index) in events"
+            :key="index"
             class="flex text-sky-700 border-b border-sky-500/40 py-2 last:border-none"
           >
             <div class="w-1/4 text-center border-r border-sky-500/40 mr-3">
-              <div class="text-2xl font-bold">21</div>
-              <div class="uppercase text-sm font-bold">Aug</div>
+              <div class="text-2xl font-bold">
+                {{ getDateOrMonth(item.time.start, "date") }}
+              </div>
+              <div class="uppercase text-sm font-bold">
+                {{ getDateOrMonth(item.time.start, "month") }}
+              </div>
             </div>
-            <div>
-              <div class="font-semibold">Title</div>
+            <div class="w-2/4">
+              <div class="font-semibold">{{ item.title }}</div>
               <div class="flex">
                 <ion-icon
                   :icon="location"
                   color="danger"
                   class="small-icon"
                 ></ion-icon
-                ><span class="pl-2">Location</span>
+                ><span class="pl-2" v-if="item.location">{{
+                  item.location
+                }}</span>
+                <span v-else class="italic text-gray-500"
+                  >No location stated
+                </span>
               </div>
             </div>
-            <!-- kalau w-full semua gerak -->
+
             <div class="justify-end flex items-center w-1/4">
-              <ion-icon :icon="eyeOutline" color="secondary"></ion-icon>
+              <div> <ion-icon 
+                :icon="eyeOutline"
+                color="secondary"
+                @click="viewevents(item.id)"
+              ></ion-icon></div>
+             
             </div>
+          </div>
+          <div v-else class="text-gray-500 italic text-center py-4 text-sm">
+            No events
           </div>
         </div>
 
@@ -87,7 +104,7 @@
               <div
                 v-for="(task, index) in tasks"
                 :key="index"
-                class="px-6 py-4 bg-amber-100 rounded-md mb-2 cursor-pointer"
+                class="my-2 p-4 bg-amber-100 rounded-md"
                 @click="openTask(task)"
               >
                 <div class="flex justify-between w-full">
@@ -139,38 +156,6 @@
             </ion-modal>
           </div>
         </div>
-
-        <!-- Folders Section -->
-        <!-- <div class="py-2">
-          <div class="flex justify-between items-center pr-2 pb-4">
-            <div class="pb-2 font-bold text-xl">Folders</div>
-            <ion-button
-              class="h-8 px-2 text-sm flex items-center justify-center space-x-1"
-              @click="addfolder()"
-            >
-              <ion-icon
-                :icon="add"
-                style="color: white"
-                class="text-lg"
-              ></ion-icon>
-              <span>Add Folder</span>
-            </ion-button>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <CustomCard
-              class="w-[150px] h-[100px]"
-              v-for="(folder, index) in folders"
-              :key="index"
-            >
-              <template #content>
-                <div class="text-center">
-                  <strong>{{ folder.title }}</strong>
-                  <p class="text-xs">{{ folder.description }}</p>
-                </div>
-              </template>
-            </CustomCard>
-          </div>
-        </div> -->
       </template>
 
       <template #footer>
@@ -240,7 +225,7 @@ import {
 } from "ionicons/icons";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import CustomCard from "@/components/templates/CustomCard.vue";
-import CustomCalendar from "@/components/templates/CustomCalendar.vue";
+import { useRouter } from 'vue-router';
 import db from "@/firebase/init.js";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -302,6 +287,7 @@ export default defineComponent({
       tasks: [],
       eyeOutline,
       selectedTask: null,
+      router: useRouter(),
     };
   },
 
@@ -328,8 +314,14 @@ export default defineComponent({
     addfolder() {
       this.$router.push("/folderform");
     },
+    viewevents(eventId) {
+      this.$router.push({ name: 'reminder', query: { id:eventId} });
+      
+      
+    },
 
     async getEvents() {
+      const currentTime = new Date().toISOString().slice(0, 16);
       //inistialize firebase authentication
       const auth = getAuth();
       //get the user from local storage
@@ -339,7 +331,8 @@ export default defineComponent({
         //get the collection of events
         collection(db, "events"),
         //get the events where the userId is equal to the user id
-        where("userId", "==", user.uid)
+        where("userId", "==", user.uid),
+        where("time.start", ">", currentTime)
       );
 
       //get the documents from the query
@@ -354,16 +347,42 @@ export default defineComponent({
 
         const updatedData = result.map((item, index) => ({
           ...item,
-          id: index,
+          id: docSnap.docs[index].id, // Use Firestore document ID instead of index
           time: {
             start: this.formatDate(item.time.start),
             end: this.formatDate(item.time.end),
           },
         }));
         //set the events to the result
-        this.events = updatedData;
+        this.events = updatedData.splice(0, 3);
+        console.log(this.events);
       } else {
         console.log("No such document!");
+      }
+    },
+    getDateOrMonth(dateString, type) {
+      const date = new Date(dateString);
+      const months = [
+        "JAN",
+        "FEB",
+        "MAR",
+        "APR",
+        "MAY",
+        "JUN",
+        "JUL",
+        "AUG",
+        "SEP",
+        "OCT",
+        "NOV",
+        "DEC",
+      ];
+
+      if (type === "date") {
+        return date.getDate(); // Returns the day of the month
+      } else if (type === "month") {
+        return months[date.getMonth()]; // Returns the abbreviated month
+      } else {
+        return "Invalid type. Use 'date' or 'month'.";
       }
     },
 
