@@ -174,7 +174,7 @@
 
             <ion-tab-button tab="tasks" href="/tasks">
               <ion-icon :icon="list" />
-              <ion-label>Notes</ion-label>
+              <ion-label>Task</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="profile" href="/profile">
@@ -316,8 +316,6 @@ export default defineComponent({
     },
     viewevents(eventId) {
       this.$router.push({ name: 'reminder', query: { id:eventId} });
-      
-      
     },
 
     async getEvents() {
@@ -360,6 +358,7 @@ export default defineComponent({
         console.log("No such document!");
       }
     },
+    // date format
     getDateOrMonth(dateString, type) {
       const date = new Date(dateString);
       const months = [

@@ -62,11 +62,6 @@ const routes = [
     component: () => import('@/views/Tasks.vue')
   },
   {
-    path: '/todo',
-    name: 'todo',
-    component: () => import('@/views/Todo.vue')
-  },
-  {
     path: '/editprofile',
     name: 'editprofile',
     component: () => import('@/views/Editprofile.vue')

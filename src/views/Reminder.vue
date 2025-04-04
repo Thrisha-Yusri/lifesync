@@ -1,10 +1,8 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="primary">
-        <ion-button shape="round" fill="clear" class="ml-2">
-          <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
-        </ion-button>
+      <ion-toolbar color="secondary">
+     
         <ion-title class="text-xl">Reminder</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -12,7 +10,7 @@
     <ion-content color="light">
       <!-- Card Header -->
       <ion-card-header class="center-header">
-        <ion-card-title class="card-title text-lg p-4"
+        <ion-card-title class="card-title text-xl p-4"
           >Event Details</ion-card-title
         >
       </ion-card-header>
@@ -92,7 +90,7 @@
           <ion-button
             v-if="!$route.query.id"
             fill="solid"
-            color="primary"
+            color="secondary"
             class="flex-1 mx-1"
             @click="saverReminder()"
             >Submit</ion-button
@@ -100,7 +98,7 @@
           <ion-button
             v-else
             fill="solid"
-            color="primary"
+            color="secondary"
             class="flex-1 mx-1"
             @click="editReminder()"
             >Save</ion-button
@@ -108,7 +106,7 @@
         </div>
       </ion-card-content>
       <ion-card-content v-else>
-        <div class="flex justify-end">
+        <div class="flex justify-end pb-2">
           <ion-icon
             id="present-alert"
             slot="icon-only"
@@ -118,12 +116,12 @@
 
           <ion-icon
             slot="icon-only"
-            :icon="create"
+            :icon="createOutline"
             color="secondary"
             @click="editMode = true"
           ></ion-icon>
         </div>
-        <div class="space-y-3">
+        <div class="space-y-3 bg-sky-100 rounded-lg p-4 mb-4">
           <div>
             <div class="font-bold">Title</div>
             <div>{{ dataObj.title }}</div>
@@ -193,7 +191,7 @@ import {
   IonCol,
   IonIcon,
 } from "@ionic/vue";
-import { arrowBack, trashOutline, create } from "ionicons/icons";
+import { arrowBack, trashOutline, createOutline } from "ionicons/icons";
 
 export default {
   components: {
@@ -254,7 +252,7 @@ export default {
       },
       editMode: false,
       trashOutline,
-      create,
+      createOutline,
       alertButtons: [
         {
           text: "No",
@@ -294,7 +292,7 @@ export default {
         await deleteDoc(docRef); // Delete the document
 
         this.$toast("Successfully deleted!", 3000, "success");
-        this.$router.push("/home")
+        this.$router.push("/home");
       } catch (error) {
         this.$toast("Failed to delete!", 3000, "danger");
       }

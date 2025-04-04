@@ -57,7 +57,7 @@
 
             <ion-tab-button tab="tasks" href="/tasks">
               <ion-icon :icon="list" />
-              <ion-label>Notes</ion-label>
+              <ion-label>Task</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="profile" href="/profile">

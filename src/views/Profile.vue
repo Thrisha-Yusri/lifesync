@@ -11,7 +11,7 @@
         <!-- Profile Header -->
 
         <div class="flex justify-center">
-          <ion-avatar class="custom-avatar" >
+          <ion-avatar class="custom-avatar">
             <img :src="'https://picsum.photos/80/80?random='" alt="avatar" />
           </ion-avatar>
         </div>
@@ -23,65 +23,56 @@
               <ion-item>
                 <ion-label>Name</ion-label>
                 <ion-text>{{ userData?.name }}</ion-text>
-              </ion-item>
-              <ion-item>
+              </ion-item></ion-list
+            >
+            <ion-list lines="none"
+              ><ion-item>
                 <ion-label>Email</ion-label>
                 <ion-text>{{ userData?.email }}</ion-text>
-              </ion-item>
-              <ion-item>
-                <ion-label>Password</ion-label>
-                <ion-button
-                  fill="outline"
-                  color="secondary"
-                  @click="editPassword"
-                  >Edit Password</ion-button
-                >
-              </ion-item>
-            </ion-list>
+              </ion-item></ion-list
+            >
           </ion-card-content>
         </ion-card>
 
-        <ion-card class="mt-2 p-6">
-          <ion-card-header>
-            <ion-card-title class="card-title pb-4">My Members</ion-card-title>
-          </ion-card-header>
+        <ion-card-header>
+          <ion-card-title class="card-title p-4">My Members</ion-card-title>
+        </ion-card-header>
 
-          <ion-card-content>
-            <div class="flex items-center space-x-1 mb-4">
-              <ion-input
-                v-model="newMember"
-                class="flex-1 p-2"
-                label="Member Name"
-                label-placement="floating"
-                placeholder="Enter friend's name"
-              ></ion-input>
-              <ion-button @click="addMember" color="primary">Add</ion-button>
-            </div>
+        <ion-card-content>
+          <div class="flex items-center space-x-1 mb-4">
+            <ion-input
+             
+              class="flex-1 p-2"
+              label="Member Name"
+              label-placement="floating"
+              placeholder="Enter friend's name"
+            ></ion-input>
+            <ion-icon :icon="addCircleOutline" color="secondary"></ion-icon>
+          </div>
 
-            <ion-list>
-              <ion-item v-for="(member, index) in members" :key="index">
-                <ion-avatar aria-hidden="true" slot="start">
-                  <img
-                    alt=""
-                    src="https://ionicframework.com/docs/img/demos/avatar.svg"
-                  />
-                </ion-avatar>
-                <ion-label>{{ member.name }}</ion-label>
-                <ion-button
-                  fill="clear"
-                  color="danger"
-                  @click="removeMember(index)"
-                >
-                  <ion-icon :icon="trashOutline"></ion-icon>
-                </ion-button>
-              </ion-item>
-            </ion-list>
-          </ion-card-content>
-        </ion-card>
+          <ion-list>
+            <ion-item v-for="(member, index) in members" :key="index">
+              <ion-avatar aria-hidden="true" slot="start">
+                <img
+                  alt=""
+                  src="https://ionicframework.com/docs/img/demos/avatar.svg"
+                />
+              </ion-avatar>
+              <ion-label>{{ member.name }}</ion-label>
+              <ion-button
+                fill="clear"
+                color="danger"
+                @click="removeMember(index)"
+              >
+                <ion-icon :icon="trashOutline"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
 
         <!-- Edit Profile Button -->
         <div class="flex justify-center mt-4">
-          <ion-button color="primary" @click="editProfile()"
+          <ion-button color="secondary" @click="editProfile()"
             >Edit Profile</ion-button
           >
         </div>
@@ -103,7 +94,7 @@
 
             <ion-tab-button tab="tasks" href="/tasks">
               <ion-icon :icon="list" />
-              <ion-label>Notes</ion-label>
+              <ion-label>Task</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="profile" href="/profile">
@@ -150,6 +141,7 @@ import {
   person,
   arrowBack,
   trashOutline,
+  addCircleOutline,
 } from "ionicons/icons";
 import db from "@/firebase/init.js";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -202,6 +194,7 @@ export default defineComponent({
         { name: "Fooie" },
       ],
       trashOutline,
+      addCircleOutline,
     };
   },
   methods: {
@@ -239,11 +232,6 @@ export default defineComponent({
       } else {
         console.log("No such User!");
       }
-    },
-
-    editPassword() {
-      console.log("Edit Password clicked!");
-      // Add your logic here for password editing
     },
 
     editProfile() {

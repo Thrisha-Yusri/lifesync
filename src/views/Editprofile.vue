@@ -2,13 +2,13 @@
   <ion-page>
     <BaseLayout>
       <template #header
-        ><ion-toolbar color="primary">
-          <ion-title class="text-l">Profile</ion-title>
+        ><ion-toolbar color="secondary">
+          <ion-title class="text-xl">Profile</ion-title>
         </ion-toolbar></template
       >
 
       <template #content>
-        <ion-card class="ion-padding">
+        <div class="bg-teal-50 rounded-lg">
           <ion-card-header>
             <ion-card-title class="card-title text-lg font-bold p-4"
               >Edit Profile</ion-card-title
@@ -16,40 +16,17 @@
           </ion-card-header>
 
           <ion-card-content>
-            <!-- Title Input -->
-            <div class="mb-4">
-              <ion-input
-                class="block w-full p-2"
-                label="Name"
-                label-placement="floating"
-                placeholder="Enter name"
-              ></ion-input>
-            </div>
+            <div class="mb-4 flex flex-col items-center justify-center gap-2">
+              <ion-avatar class="custom-avatar">
+                <img
+                  :src="'https://picsum.photos/80/80?random='"
+                  alt="avatar"
+                />
+              </ion-avatar>
 
-            <div class="mb-4">
-              <ion-input
-                class="block w-full p-2"
-                label="Email"
-                label-placement="floating"
-                placeholder="Enter email"
-              ></ion-input>
-            </div>
-
-            <div class="mb-4">
-              <ion-input
-                class="block w-full p-2"
-                label="Password"
-                label-placement="floating"
-                placeholder="Enter password"
-              ></ion-input>
-            </div>
-
-            <!-- Upload Files -->
-            <div class="mb-4">
-              <ion-label class="block font-medium mb-2">Upload Profile Picture</ion-label>
-              <ion-button @click="openFilePicker" color="primary"
-                >Choose Picture</ion-button
-              >
+              <ion-button color="secondary" @click="$refs.fileInput.click()">
+                Choose Picture
+              </ion-button>
               <input
                 type="file"
                 multiple
@@ -59,13 +36,43 @@
               />
             </div>
 
-            <!-- Buttons Section -->
-            <div class="flex justify-end mt-6 space-x-2">
-              <ion-button color="danger">Cancel</ion-button>
-              <ion-button color="primary">Add</ion-button>
+            <div class="mb-3 flex justify-between w-full">
+              <div class="text-xl font-bold">{{ userData?.name }}</div>
+              <ion-icon
+                slot="icon-only"
+                :icon="createOutline"
+                color="secondary"
+              />
+            </div>
+
+            <div class="mb-3 flex justify-between w-full">
+              <ion-text>{{ userData?.email }}</ion-text>
+              <ion-icon
+                slot="icon-only"
+                :icon="createOutline"
+                color="secondary"
+              />
+            </div>
+
+            <div class="mb-3">
+              <ion-input
+                class="block w-full p-2"
+                label="Password"
+                label-placement="floating"
+                placeholder="Enter password"
+              ></ion-input>
+            </div>
+
+            <div class="flex justify-between mt-2 gap-2">
+              <ion-button fill="solid" color="danger" class="flex-1"
+                >Cancel</ion-button
+              >
+              <ion-button fill="solid" color="secondary" class="flex-1"
+                >Save</ion-button
+              >
             </div>
           </ion-card-content>
-        </ion-card>
+        </div>
       </template>
     </BaseLayout>
   </ion-page>
@@ -74,6 +81,8 @@
 <script>
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import {
+  IonAvatar,
+  IonText,
   IonList,
   IonIcon,
   IonPage,
@@ -91,9 +100,15 @@ import {
   IonTextarea,
 } from "@ionic/vue";
 import { defineComponent, ref } from "vue";
+import db from "@/firebase/init.js";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { createOutline } from "ionicons/icons";
 
 export default defineComponent({
   components: {
+    IonAvatar,
+    IonText,
     IonIcon,
     IonPage,
     IonList,
@@ -111,30 +126,50 @@ export default defineComponent({
     IonTextarea,
     BaseLayout,
   },
-  setup() {
-    const fileInput = ref(null);
-    const selectedFiles = ref([]);
-
-    // Open file picker
-    const openFilePicker = () => {
-      if (fileInput.value) {
-        fileInput.value.click();
-      }
+  ionViewDidEnter() {
+    this.getUser();
+    this.userData = JSON.parse(localStorage.getItem("user"));
+  },
+  data() {
+    return {
+      users: [],
+      userData: null,
+      createOutline,
     };
+  },
 
-    // Handle file upload
-    const handleFileUpload = (event) => {
-      const input = event.target;
-      if (input && input.files) {
-        selectedFiles.value = Array.from(input.files);
-        console.log(
-          "Selected files:",
-          selectedFiles.value.map((f) => f.name)
-        );
+  methods: {
+    async getUser() {
+      // Initialize Firebase authentication
+      const auth = getAuth();
+      // Get the user from local storage
+      let user = JSON.parse(localStorage.getItem("user"));
+      // Get the events from the database
+      const queryRef = query(
+        // Get the collection of events
+        collection(db, "users"),
+        // Get the events where the userId is equal to the user id
+        where("userId", "==", user.uid)
+      );
+
+      // Get the documents from the query
+      const docSnap = await getDocs(queryRef);
+
+      // If the document is not empty
+      if (!docSnap.empty) {
+        // Map the documents to the data
+        let result = [];
+        result = docSnap.docs.map((doc) => doc.data());
+
+        const updatedData = result.map((item, index) => ({
+          ...item,
+          id: index,
+        }));
+        this.tasks = updatedData;
+      } else {
+        console.log("No such User!");
       }
-    };
-
-    return { fileInput, openFilePicker, handleFileUpload, selectedFiles };
+    },
   },
 });
 </script>
@@ -142,8 +177,13 @@ export default defineComponent({
 <style scoped>
 /* Add spacing and styling for the card */
 ion-card {
-  margin: 20px;
+  margin: 12px;
   border-radius: 12px;
+  padding: 0; /* Remove if not needed */
+}
+ion-card-content {
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 /* Title styling */
@@ -165,5 +205,10 @@ ion-item {
   display: flex;
   justify-content: space-between;
   margin-top: 15px;
+}
+.custom-avatar {
+  --size: 120px; /* Adjust size as needed */
+  width: var(--size);
+  height: var(--size);
 }
 </style>

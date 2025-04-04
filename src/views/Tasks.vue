@@ -32,7 +32,7 @@
                 class="px-6 py-4 bg-amber-100 rounded-md mb-2 cursor-pointer"
               >
                 <div class="flex justify-between w-full">
-                  <strong class="text-lg">{{ task.title}}</strong>
+                  <strong class="text-lg">{{ task.title }}</strong>
                   <div>
                     <ion-icon
                       class="pr-3"
@@ -64,8 +64,19 @@
               <div class="flex justify-center items-center h-full">
                 <div class="custom-card">
                   <div>
-                    <div class="font-bold text-2xl">
-                      {{ selectedTask?.title }}
+                    <div class="flex justify-between w-full">
+                      <div class="font-bold text-2xl">
+                        {{ selectedTask?.title }}
+                      </div>
+
+                      <div>
+                        <ion-icon
+                          slot="icon-only"
+                          :icon="createOutline"
+                          color="secondary"
+                          @click="viewtasks(selectedTask.id)"
+                        ></ion-icon>
+                      </div>
                     </div>
                     <ul
                       v-if="selectedTask && selectedTask.tasks.length > 0"
@@ -82,9 +93,11 @@
                         }}</span>
                       </li>
                     </ul>
-                    <ion-button expand="full" class="mt-4" @click="closeTask"
-                      >Close</ion-button
-                    >
+                    <div class="flex justify-between mt-2 gap-2">
+                      <ion-button fill="solid" color="danger" class="flex-1"
+                        @click="cancelTask()">Cancel</ion-button
+                      >
+                    </div>
                   </div>
                 </div>
               </div>
@@ -115,7 +128,7 @@
 
             <ion-tab-button tab="tasks" href="/tasks">
               <ion-icon :icon="list" />
-              <ion-label>Notes</ion-label>
+              <ion-label>Task</ion-label>
             </ion-tab-button>
 
             <ion-tab-button tab="profile" href="/profile">
@@ -159,12 +172,12 @@ import {
   addCircleOutline,
   eyeOutline,
   trashOutline,
+  createOutline,
 } from "ionicons/icons";
 import db from "@/firebase/init.js";
 import {
   collection,
   getDocs,
-  getDoc,
   query,
   where,
   doc,
@@ -195,7 +208,7 @@ export default defineComponent({
 
   ionViewDidEnter() {
     this.getTasks();
-    this.deleteId=null;
+    this.deleteId = null;
     this.userData = JSON.parse(localStorage.getItem("user"));
   },
 
@@ -213,6 +226,7 @@ export default defineComponent({
       selectedTask: null,
       trashOutline,
       deleteId: null,
+      createOutline,
       alertButtons: [
         {
           text: "No",
@@ -233,6 +247,15 @@ export default defineComponent({
   methods: {
     addnotes() {
       this.$router.push("/todolistform");
+    },
+
+    viewtasks(taskId) {
+      this.closeTask();
+      this.$router.push({ name: "todolistform", query: { id: taskId } });
+    },
+
+    cancelTask(){
+      this.$router.push("/home");
     },
 
     async getTasks() {
@@ -256,10 +279,15 @@ export default defineComponent({
         //map the documents to the data
         let result = [];
         //get the data from the documents
-        result = docSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        result = docSnap.docs.map((doc) => doc.data());
 
+        const updatedData = result.map((item, index) => ({
+          ...item,
+          id: docSnap.docs[index].id, // Use Firestore document ID instead of index
+        }));
         //set the events to the result
-        this.tasks = result;
+        this.tasks = updatedData;
+        console.log(this.tasks);
       } else {
         console.log("No such tasks!");
       }
@@ -276,12 +304,13 @@ export default defineComponent({
         this.getTasks();
 
         this.$toast("Successfully deleted!", 3000, "success");
-       
       } catch (error) {
         this.$toast("Failed to delete!", 3000, "danger");
       }
     },
     openTask(task) {
+      console.log(task);
+
       this.selectedTask = task;
     },
     closeTask() {
@@ -301,7 +330,7 @@ export default defineComponent({
 }
 
 .custom-card {
-  background-color: #f4e8ba; /* Amber-100 */
+  background-color: #f3e9c4; /* Amber-100 */
   padding: 20px;
   border-radius: 12px;
   width: 90%;

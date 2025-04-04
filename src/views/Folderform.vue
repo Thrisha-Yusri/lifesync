@@ -2,23 +2,15 @@
   <ion-page>
     <BaseLayout>
       <template #header
-        ><ion-toolbar color="primary">
-          <ion-button
-           
-            shape="round"
-            fill="clear"
-            @click="goBack"
-            class="ml-2"
-          >
-            <ion-icon slot="icon-only" :icon="arrowBack" color="light"></ion-icon>
-          </ion-button>
+        ><ion-toolbar color="secondary">
+        
 
           <ion-title class="text-xl">Folder</ion-title>
         </ion-toolbar></template
       >
 
       <template #content>
-        <ion-card class="ion-padding">
+        
           <ion-card-header>
             <ion-card-title class="card-title text-lg font-bold p-4"
               >Create New Folder</ion-card-title
@@ -51,7 +43,7 @@
 
             <div class="mb-4">
               <ion-label class="block font-medium mb-2">Upload Files</ion-label>
-              <ion-button @click="openFilePicker" color="primary"
+              <ion-button @click="openFilePicker" color="secondary"
                 >Choose File</ion-button
               >
               <input
@@ -117,14 +109,14 @@
               >
               <ion-button
                 fill="solid"
-                color="primary"
+                color="secondary"
                 class="flex-1 mx-1"
                 @click="saverNotes()"
                 >Save</ion-button
               >
             </div>
           </ion-card-content>
-        </ion-card>
+      
       </template>
     </BaseLayout>
   </ion-page>
