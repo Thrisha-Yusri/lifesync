@@ -4,6 +4,10 @@
       <template #header>
         <ion-toolbar color="light">
           <ion-title class="text-xl">Life-Sync</ion-title>
+          <ion-progress-bar
+            type="indeterminate"
+            v-if="isLoading"
+          ></ion-progress-bar>
         </ion-toolbar>
       </template>
 
@@ -48,6 +52,10 @@
                     ></ion-icon>
                   </div>
                 </div>
+                <div>
+                  <div class="text-sm text-gray-600">Overall Tasks: {{ task.tasks.length }}</div>
+                  <div class="text-sm text-lime-600">Completed Tasks: {{ task.tasks.filter((task) => task.completed).length }}</div>
+                </div>
               </div>
             </div>
 
@@ -70,12 +78,18 @@
                       </div>
 
                       <div>
-                        <ion-icon
-                          slot="icon-only"
-                          :icon="createOutline"
-                          color="secondary"
-                          @click="viewtasks(selectedTask.id)"
-                        ></ion-icon>
+                        <div
+                          class="rounded-lg border p-2 font-semibold"
+                          :class="
+                            completedCurrentTaskNum === overallCurrentTaskNum
+                              ? 'text-green-500'
+                              : 'text-red-500'
+                          "
+                        >
+                          {{ completedCurrentTaskNum }}/{{
+                            overallCurrentTaskNum
+                          }}
+                        </div>
                       </div>
                     </div>
                     <ul
@@ -85,17 +99,34 @@
                       <li
                         v-for="(t, i) in selectedTask.tasks"
                         :key="i"
-                        class="flex items-center space-x-2"
+                        class="flex items-center space-x-2 space-y-2"
                       >
-                        <ion-checkbox v-model="t.completed"></ion-checkbox>
-                        <span :class="{ 'line-through': t.completed }">{{
-                          t.text
-                        }}</span>
+                        <div class="pt-4">
+                          <ion-checkbox v-model="t.completed"></ion-checkbox>
+                        </div>
+
+                        <div
+                          :class="{ 'line-through text-gray-500': t.completed }"
+                        >
+                          {{ t.text }}
+                        </div>
                       </li>
                     </ul>
-                    <div class="flex justify-between mt-2 gap-2">
-                      <ion-button fill="solid" color="danger" class="flex-1"
-                        @click="cancelTask()">Cancel</ion-button
+
+                    <div class="flex justify-between mt-2 gap-2 pt-4">
+                      <ion-button
+                        fill="solid"
+                        color="danger"
+                        class="flex-1"
+                        @click="closeTask"
+                        >Cancel</ion-button
+                      >
+                      <ion-button
+                        fill="solid"
+                        color="secondary"
+                        class="flex-1"
+                        @click="saveTask(selectedTask)"
+                        >Save</ion-button
                       >
                     </div>
                   </div>
@@ -161,6 +192,7 @@ import {
   IonCheckbox,
   IonIcon,
   IonModal,
+  IonProgressBar,
 } from "@ionic/vue";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import {
@@ -182,6 +214,7 @@ import {
   where,
   doc,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -204,14 +237,23 @@ export default defineComponent({
     IonCheckbox,
     BaseLayout,
     IonModal,
+    IonProgressBar,
   },
 
   ionViewDidEnter() {
+    this.isLoading = false;
     this.getTasks();
     this.deleteId = null;
     this.userData = JSON.parse(localStorage.getItem("user"));
   },
-
+  computed: {
+    overallCurrentTaskNum() {
+      return this.selectedTask?.tasks.length;
+    },
+    completedCurrentTaskNum() {
+      return this.selectedTask?.tasks.filter((task) => task.completed).length;
+    },
+  },
   data() {
     return {
       add,
@@ -227,6 +269,7 @@ export default defineComponent({
       trashOutline,
       deleteId: null,
       createOutline,
+      isLoading: false,
       alertButtons: [
         {
           text: "No",
@@ -253,12 +296,23 @@ export default defineComponent({
       this.closeTask();
       this.$router.push({ name: "todolistform", query: { id: taskId } });
     },
+    async saveTask(task) {
+      this.isLoading = true;
+      try {
+        const docId = task.id; // Get document ID from query params
+        const docRef = doc(db, "tasks", docId); // Reference to the document
 
-    cancelTask(){
-      this.$router.push("/home");
+        await updateDoc(docRef, task); // Update document with new data
+        this.$toast("Successfully Updated!", 3000, "success");
+        this.getTasks();
+      } catch (error) {
+        this.$toast("Unsuccessfully Updated!", 3000, "danger");
+      }
+      this.isLoading = false;
     },
-
     async getTasks() {
+      this.closeTask();
+      this.isLoading = true;
       //inistialize firebase authentication
       const auth = getAuth();
       //get the user from local storage
@@ -287,15 +341,13 @@ export default defineComponent({
         }));
         //set the events to the result
         this.tasks = updatedData;
-        console.log(this.tasks);
       } else {
-        console.log("No such tasks!");
       }
+      this.isLoading = false;
     },
 
     async deleteTasks(taskId) {
-      console.log(taskId);
-
+      this.isLoading = true;
       try {
         const docRef = doc(db, "tasks", taskId); // Reference to the document
 
@@ -307,10 +359,9 @@ export default defineComponent({
       } catch (error) {
         this.$toast("Failed to delete!", 3000, "danger");
       }
+      this.isLoading = false;
     },
     openTask(task) {
-      console.log(task);
-
       this.selectedTask = task;
     },
     closeTask() {

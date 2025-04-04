@@ -4,17 +4,24 @@
     <BaseLayout>
       <template #header>
         <ion-toolbar color="light">
-          <ion-title class="text-xl">Life-Sync</ion-title>
+          <ion-title class="text-xl">Life-Sync {{ isLoading }}</ion-title>
           <ion-buttons slot="end">
             <ion-button @click="logout()">
               <ion-icon :icon="logOutOutline" color="primary"></ion-icon>
             </ion-button>
           </ion-buttons>
+          <ion-progress-bar
+            type="indeterminate"
+            v-if="isLoading"
+          ></ion-progress-bar>
         </ion-toolbar>
       </template>
 
       <template #content>
         <!-- Profile card -->
+        <div class="flex justify-between w-full pb-3">
+          <div class="font-bold uppercase text-secondary">My Profile</div>
+        </div>
         <div class="flex p-4 bg-indigo-200 rounded-lg">
           <div class="max-w-1/4 px-3">
             <ion-avatar>
@@ -27,20 +34,19 @@
           </div>
         </div>
 
+        <div class="flex justify-between w-full pt-5">
+          <div class="font-bold uppercase text-secondary">Upcoming Events</div>
+          <div class="pr-2">
+            <ion-icon
+              :icon="calendarOutline"
+              @click="$router.push('/calendar')"
+              color="secondary"
+            ></ion-icon>
+          </div>
+        </div>
+
         <!-- Events Card -->
         <div class="my-2 p-4 bg-sky-100 rounded-lg">
-          <div class="flex justify-between w-full">
-            <div class="font-bold uppercase text-secondary">
-              Upcoming Events
-            </div>
-            <div>
-              <ion-icon
-                :icon="calendarOutline"
-                @click="$router.push('/calendar')"
-                color="secondary"
-              ></ion-icon>
-            </div>
-          </div>
           <div
             v-if="events.length > 0"
             v-for="(item, index) in events"
@@ -73,12 +79,13 @@
             </div>
 
             <div class="justify-end flex items-center w-1/4">
-              <div> <ion-icon 
-                :icon="eyeOutline"
-                color="secondary"
-                @click="viewevents(item.id)"
-              ></ion-icon></div>
-             
+              <div>
+                <ion-icon
+                  :icon="eyeOutline"
+                  color="secondary"
+                  @click="viewevents(item.id)"
+                ></ion-icon>
+              </div>
             </div>
           </div>
           <div v-else class="text-gray-500 italic text-center py-4 text-sm">
@@ -87,10 +94,10 @@
         </div>
 
         <!-- Tasks List -->
-        <div class="my-2 p-4">
+        <div class="my-2 py-4">
           <div class="flex justify-between w-full">
             <div class="font-bold uppercase text-secondary">To-do list</div>
-            <div>
+            <div class="pr-2">
               <ion-icon
                 :icon="addCircleOutline"
                 @click="addList()"
@@ -147,9 +154,15 @@
                         }}</span>
                       </li>
                     </ul>
-                    <ion-button expand="full" class="mt-4" @click="closeTask"
-                      >Close</ion-button
-                    >
+                    <div class="flex justify-between mt-2 gap-2">
+                      <ion-button
+                        fill="solid"
+                        color="danger"
+                        class="flex-1"
+                        @click="closeTask"
+                        >Cancel</ion-button
+                      >
+                    </div>
                   </div>
                 </div>
               </div>
@@ -209,6 +222,7 @@ import {
   IonButtons,
   IonCheckbox,
   IonModal,
+  IonProgressBar,
 } from "@ionic/vue";
 
 import {
@@ -225,7 +239,7 @@ import {
 } from "ionicons/icons";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import CustomCard from "@/components/templates/CustomCard.vue";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 import db from "@/firebase/init.js";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -253,10 +267,12 @@ export default defineComponent({
     IonButtons,
     IonCheckbox,
     IonModal,
+    IonProgressBar,
   },
 
   //run everytime this page is open
   ionViewDidEnter() {
+    this.isLoading = false;
     this.getTasks();
     this.getEvents();
     this.userData = JSON.parse(localStorage.getItem("user"));
@@ -264,6 +280,7 @@ export default defineComponent({
 
   data() {
     return {
+      isLoading: false,
       add,
       home,
       folderOpen,
@@ -315,10 +332,11 @@ export default defineComponent({
       this.$router.push("/folderform");
     },
     viewevents(eventId) {
-      this.$router.push({ name: 'reminder', query: { id:eventId} });
+      this.$router.push({ name: "reminder", query: { id: eventId } });
     },
 
     async getEvents() {
+      this.isLoading = true;
       const currentTime = new Date().toISOString().slice(0, 16);
       //inistialize firebase authentication
       const auth = getAuth();
@@ -357,6 +375,7 @@ export default defineComponent({
       } else {
         console.log("No such document!");
       }
+      this.isLoading = false;
     },
     // date format
     getDateOrMonth(dateString, type) {
@@ -386,6 +405,7 @@ export default defineComponent({
     },
 
     async getTasks() {
+      this.isLoading = true;
       //inistialize firebase authentication
       const auth = getAuth();
       //get the user from local storage
@@ -417,6 +437,7 @@ export default defineComponent({
       } else {
         console.log("No such tasks!");
       }
+      this.isLoading = false;
     },
 
     openTask(task) {

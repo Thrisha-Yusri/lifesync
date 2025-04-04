@@ -3,20 +3,20 @@
     <BaseLayout>
       <template #header
         ><ion-toolbar color="secondary">
-          <ion-title class="text-xl">Profile</ion-title>
+          <ion-title class="text-xl"> Password</ion-title>
         </ion-toolbar></template
       >
 
       <template #content>
-        <div class="bg-teal-50 rounded-lg">
+        <div class="bg-rose-50 rounded-lg">
           <ion-card-header>
             <ion-card-title class="card-title text-lg font-bold p-4"
-              >Edit Profile</ion-card-title
+              >Change Password</ion-card-title
             >
           </ion-card-header>
 
           <ion-card-content>
-            <div class="mb-4 flex flex-col items-center justify-center gap-2">
+            <!-- <div class="mb-4 flex flex-col items-center justify-center gap-2">
               <ion-avatar class="custom-avatar">
                 <img
                   :src="'https://picsum.photos/80/80?random='"
@@ -34,43 +34,47 @@
                 hidden
                 @change="handleFileUpload"
               />
-            </div>
+            </div> -->
+            <form>
+              <div class="mb-3">
+                <ion-input
+                  class="block w-full p-2"
+                  label="Current Password"
+                  label-placement="floating"
+                  type="password"
+                  placeholder="Enter password"
+                  v-model="user.currentPassword"
+                ></ion-input>
+              </div>
 
-            <div class="mb-3 flex justify-between w-full">
-              <div class="text-xl font-bold">{{ userData?.name }}</div>
-              <ion-icon
-                slot="icon-only"
-                :icon="createOutline"
-                color="secondary"
-              />
-            </div>
+              <div class="mb-3">
+                <ion-input
+                  class="block w-full p-2"
+                  label="New Password"
+                  type="password"
+                  label-placement="floating"
+                  placeholder="Enter password"
+                  v-model="user.password"
+                ></ion-input>
+              </div>
 
-            <div class="mb-3 flex justify-between w-full">
-              <ion-text>{{ userData?.email }}</ion-text>
-              <ion-icon
-                slot="icon-only"
-                :icon="createOutline"
-                color="secondary"
-              />
-            </div>
-
-            <div class="mb-3">
-              <ion-input
-                class="block w-full p-2"
-                label="Password"
-                label-placement="floating"
-                placeholder="Enter password"
-              ></ion-input>
-            </div>
-
-            <div class="flex justify-between mt-2 gap-2">
-              <ion-button fill="solid" color="danger" class="flex-1"
-                >Cancel</ion-button
-              >
-              <ion-button fill="solid" color="secondary" class="flex-1"
-                >Save</ion-button
-              >
-            </div>
+              <div class="flex justify-between mt-2 gap-2">
+                <ion-button
+                  fill="solid"
+                  color="danger"
+                  class="flex-1"
+                  @click="$router.back()"
+                  >Cancel</ion-button
+                >
+                <ion-button
+                  fill="solid"
+                  color="secondary"
+                  class="flex-1"
+                  @click="updateUserCredentials(user)"
+                  >Save</ion-button
+                >
+              </div>
+            </form>
           </ion-card-content>
         </div>
       </template>
@@ -101,9 +105,16 @@ import {
 } from "@ionic/vue";
 import { defineComponent, ref } from "vue";
 import db from "@/firebase/init.js";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
 import { createOutline } from "ionicons/icons";
+import {
+  getAuth,
+  updateEmail,
+  updatePassword,
+  updateProfile,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+} from "firebase/auth";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 
 export default defineComponent({
   components: {
@@ -127,49 +138,124 @@ export default defineComponent({
     BaseLayout,
   },
   ionViewDidEnter() {
-    this.getUser();
     this.userData = JSON.parse(localStorage.getItem("user"));
+
+    this.user = {
+      password: "",
+      currentPassword: "",
+    };
   },
   data() {
     return {
       users: [],
       userData: null,
       createOutline,
+      editMode: false,
+      user: {
+        password: "",
+        currentPassword: "",
+      },
     };
   },
 
   methods: {
-    async getUser() {
-      // Initialize Firebase authentication
-      const auth = getAuth();
-      // Get the user from local storage
-      let user = JSON.parse(localStorage.getItem("user"));
-      // Get the events from the database
-      const queryRef = query(
-        // Get the collection of events
-        collection(db, "users"),
-        // Get the events where the userId is equal to the user id
-        where("userId", "==", user.uid)
-      );
+    async editProfile() {
+      try {
+        const docId = this.$route.query.id; // Get document ID from query params
+        const docRef = doc(db, "user", docId); // Reference to the document
 
-      // Get the documents from the query
-      const docSnap = await getDocs(queryRef);
+        await updateDoc(docRef, this.dataObj); // Update document with new data
 
-      // If the document is not empty
-      if (!docSnap.empty) {
-        // Map the documents to the data
-        let result = [];
-        result = docSnap.docs.map((doc) => doc.data());
-
-        const updatedData = result.map((item, index) => ({
-          ...item,
-          id: index,
-        }));
-        this.tasks = updatedData;
-      } else {
-        console.log("No such User!");
+        this.$toast("Successfully Updated!", 3000, "success");
+        this.editMode = false;
+        this.getDetails();
+      } catch (error) {
+        this.$toast("Unsuccessfully Updated!", 3000, "danger");
       }
     },
+    async updateUserCredentials(user) {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+
+      // Check if user is logged in via localStorage
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+      if (!isLoggedIn) {
+        this.$toast("Please log in first", 3000, "danger");
+        this.$router.push("/login");
+        return;
+      }
+
+      // Get user data from localStorage
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      if (!storedUser) {
+        this.$toast("User data not found", 3000, "danger");
+        this.$router.push("/login");
+        return;
+      }
+
+      if (!currentUser) {
+        this.$toast(
+          "Authentication error. Please log in again",
+          3000,
+          "danger"
+        );
+        this.$router.push("/login");
+        return;
+      }
+
+      try {
+        // Re-authenticate the user before making any changes
+        const credential = EmailAuthProvider.credential(
+          currentUser.email,
+          user.currentPassword
+        );
+        await reauthenticateWithCredential(currentUser, credential);
+        console.log("User re-authenticated successfully.");
+
+        const userDocRef = doc(db, "users", currentUser.uid);
+        let updateData = {}; // Object to store Firestore updates
+
+        // Update password if provided
+        if (user.password) {
+          await updatePassword(currentUser, user.password);
+          console.log("Password updated successfully!");
+        }
+
+        // Retrieve updated user data from Firestore
+        const updatedUserDoc = await getDoc(userDocRef);
+        if (updatedUserDoc.exists()) {
+          const updatedUserData = updatedUserDoc.data();
+          console.log("Updated user data from Firestore:", updatedUserData);
+
+          // Update local storage
+          localStorage.setItem("user", JSON.stringify(updatedUserData));
+          console.log("Local storage updated with new user data.");
+        }
+      } catch (error) {
+        console.error("Error updating user details:", error.message);
+      }
+    },
+
+    // async getUser() {
+    //   if (!this.userId) {
+    //     console.error("User ID is missing!");
+    //     return;
+    //   }
+
+    //   const queryRef = query(
+    //     collection(db, "users"),
+    //     where("userId", "==", this.userId)
+    //   );
+
+    //   const docSnap = await getDocs(queryRef);
+
+    //   if (!docSnap.empty) {
+    //     this.userData = docSnap.docs[0].data();
+    //     console.log("User Data:", this.userData);
+    //   } else {
+    //     console.error("No such User!");
+    //   }
+    // },
   },
 });
 </script>

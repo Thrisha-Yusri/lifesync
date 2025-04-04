@@ -188,8 +188,7 @@ export default defineComponent({
       this.dataObj.tasks.splice(index, 1);
     },
     cancelNotes() {
-      console.log("Cancelled");
-      this.$router.push("/home");
+      this.$router.back();
     },
 
     async editTasks() {

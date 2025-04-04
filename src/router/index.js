@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
-import TabsPage from '../views/Folderform.vue';
+import TabsPage from '../views/Tabs.vue';
 
 const routes = [
   {
@@ -83,15 +83,15 @@ const routes = [
       },
       {
         path: 'tab1',
-        component: () => import('@/views/Signup.vue')
+        component: () => import('@/views/Home.vue')
       },
       {
         path: 'tab2',
-        component: () => import('@/views/Login.vue')
+        component: () => import('@/views/Profile.vue')
       },
       {
         path: 'tab3',
-        component: () => import('@/views/Todolistform.vue')
+        component: () => import('@/views/Tasks.vue')
       }
     ]
   }

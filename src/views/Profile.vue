@@ -12,7 +12,10 @@
 
         <div class="flex justify-center">
           <ion-avatar class="custom-avatar">
-            <img :src="'https://picsum.photos/80/80?random='" alt="avatar" />
+            <img
+              :src="'https://picsum.photos/80/80?random=' + userData?.id"
+              alt="avatar"
+            />
           </ion-avatar>
         </div>
 
@@ -23,14 +26,15 @@
               <ion-item>
                 <ion-label>Name</ion-label>
                 <ion-text>{{ userData?.name }}</ion-text>
-              </ion-item></ion-list
-            >
-            <ion-list lines="none"
-              ><ion-item>
+              </ion-item>
+              <ion-item>
                 <ion-label>Email</ion-label>
                 <ion-text>{{ userData?.email }}</ion-text>
-              </ion-item></ion-list
-            >
+              </ion-item>
+            </ion-list>
+            <div @click="changePassword()" class="text-end text-cyan-600 pt-3">
+              Change Password
+            </div>
           </ion-card-content>
         </ion-card>
 
@@ -41,7 +45,6 @@
         <ion-card-content>
           <div class="flex items-center space-x-1 mb-4">
             <ion-input
-             
               class="flex-1 p-2"
               label="Member Name"
               label-placement="floating"
@@ -70,12 +73,7 @@
           </ion-list>
         </ion-card-content>
 
-        <!-- Edit Profile Button -->
-        <div class="flex justify-center mt-4">
-          <ion-button color="secondary" @click="editProfile()"
-            >Edit Profile</ion-button
-          >
-        </div>
+        
       </template>
 
       <template #footer>
@@ -143,9 +141,6 @@ import {
   trashOutline,
   addCircleOutline,
 } from "ionicons/icons";
-import db from "@/firebase/init.js";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 
 export default defineComponent({
@@ -174,7 +169,6 @@ export default defineComponent({
     BaseLayout,
   },
   ionViewDidEnter() {
-    this.getUser();
     this.userData = JSON.parse(localStorage.getItem("user"));
   },
 
@@ -201,41 +195,8 @@ export default defineComponent({
     removeMember(index) {
       this.members.splice(index, 1);
     },
-
-    async getUser() {
-      // Initialize Firebase authentication
-      const auth = getAuth();
-      // Get the user from local storage
-      let user = JSON.parse(localStorage.getItem("user"));
-      // Get the events from the database
-      const queryRef = query(
-        // Get the collection of events
-        collection(db, "users"),
-        // Get the events where the userId is equal to the user id
-        where("userId", "==", user.uid)
-      );
-
-      // Get the documents from the query
-      const docSnap = await getDocs(queryRef);
-
-      // If the document is not empty
-      if (!docSnap.empty) {
-        // Map the documents to the data
-        let result = [];
-        result = docSnap.docs.map((doc) => doc.data());
-
-        const updatedData = result.map((item, index) => ({
-          ...item,
-          id: index,
-        }));
-        this.tasks = updatedData;
-      } else {
-        console.log("No such User!");
-      }
-    },
-
-    editProfile() {
-      this.$router.push("/editprofile");
+    changePassword(){
+      this.$router.push('/editprofile')
     },
   },
 });

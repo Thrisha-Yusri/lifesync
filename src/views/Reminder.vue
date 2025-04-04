@@ -2,14 +2,13 @@
   <ion-page>
     <ion-header>
       <ion-toolbar color="secondary">
-     
         <ion-title class="text-xl">Reminder</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content color="light">
       <!-- Card Header -->
-      <ion-card-header class="center-header">
+      <ion-card-header class="center-header" v-if="editMode">
         <ion-card-title class="card-title text-xl p-4"
           >Event Details</ion-card-title
         >
@@ -106,23 +105,26 @@
         </div>
       </ion-card-content>
       <ion-card-content v-else>
-        <div class="flex justify-end pb-2">
-          <ion-icon
-            id="present-alert"
-            slot="icon-only"
-            :icon="trashOutline"
-            color="danger"
-          ></ion-icon>
+        <div class="space-y-3 bg-sky-100 shadow rounded-lg px-4 py-6 mb-4">
+          <div class="flex border-b justify-between font-bold pb-2 text-xl text-cyan-700">
+            <div >Event Details</div>
+            <div class="flex justify-end pb-2 space-x-2">
+              <ion-icon
+                id="present-alert"
+                slot="icon-only"
+                :icon="trashOutline"
+                color="danger"
+              ></ion-icon>
 
-          <ion-icon
-            slot="icon-only"
-            :icon="createOutline"
-            color="secondary"
-            @click="editMode = true"
-          ></ion-icon>
-        </div>
-        <div class="space-y-3 bg-sky-100 rounded-lg p-4 mb-4">
-          <div>
+              <ion-icon
+                slot="icon-only"
+                :icon="createOutline"
+                color="secondary"
+                @click="editMode = true"
+              ></ion-icon>
+            </div>
+          </div>
+          <div class="pt-3">
             <div class="font-bold">Title</div>
             <div>{{ dataObj.title }}</div>
           </div>
