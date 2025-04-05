@@ -3,14 +3,25 @@
     <!-- Main Page Layout -->
     <BaseLayout>
       <template #header>
-        <ion-toolbar color="light">
-          <ion-title class="text-xl">Life-Sync</ion-title>
-        </ion-toolbar>
+        <ion-header>
+          <ion-toolbar color="light">
+            <ion-buttons slot="start">
+              <ion-button @click="$router.go(-1)">
+                <ion-icon :icon="arrowBackOutline" color="secondary"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+            <ion-title class="text-xl">Life-Sync</ion-title>
+            <ion-progress-bar
+            type="indeterminate"
+            v-if="isLoading"
+          ></ion-progress-bar>
+          </ion-toolbar></ion-header
+        >
       </template>
 
       <template #content>
         <div class="flex justify-between items-center p-4">
-            <ion-card-title class="card-title text-left text-l"
+          <ion-card-title class="card-title text-left text-l"
             >My Calendar</ion-card-title
           >
           <div>
@@ -24,15 +35,15 @@
         </div>
         <CustomCalendar :events="events" />
       </template>
-
-      
     </BaseLayout>
   </ion-page>
 </template>
 <script>
 import { defineComponent, ref } from "vue";
-import { addCircleOutline } from "ionicons/icons";
+import { addCircleOutline, arrowBackOutline } from "ionicons/icons";
 import {
+  IonProgressBar,
+  IonHeader,
   IonRouterOutlet,
   IonToolbar,
   IonTabBar,
@@ -41,6 +52,9 @@ import {
   IonPage,
   IonCard,
   IonCardTitle,
+  IonButton,
+  IonBackButton,
+  IonButtons,
 } from "@ionic/vue";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import CustomCalendar from "@/components/templates/CustomCalendar.vue";
@@ -51,6 +65,8 @@ import { getAuth } from "firebase/auth";
 export default defineComponent({
   name: "Calendar",
   components: {
+    IonProgressBar,
+    IonHeader,
     IonCard,
     IonRouterOutlet,
     IonToolbar,
@@ -61,10 +77,14 @@ export default defineComponent({
     BaseLayout,
     CustomCalendar,
     IonCardTitle,
+    IonButton,
+    IonBackButton,
+    IonButtons,
   },
 
   //run everytime this page is open
   ionViewDidEnter() {
+    this.isLoading = false;
     this.getEvents();
     this.userData = JSON.parse(localStorage.getItem("user"));
   },
@@ -72,7 +92,9 @@ export default defineComponent({
   data() {
     return {
       addCircleOutline,
+      arrowBackOutline,
       isAddFolderModalOpen: false,
+      isLoading: false,
       folders: [],
       newFolder: {
         title: "",
@@ -111,6 +133,7 @@ export default defineComponent({
     },
 
     async getEvents() {
+      this.isLoading = true;
       //inistialize firebase authentication
       const auth = getAuth();
       //get the user from local storage
@@ -146,6 +169,7 @@ export default defineComponent({
       } else {
         console.log("No such document!");
       }
+      this.isLoading = false;
     },
 
     formatDate(isoString) {

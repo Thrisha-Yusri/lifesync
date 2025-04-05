@@ -1,11 +1,21 @@
 <template>
   <ion-page>
     <BaseLayout>
-      <template #header
-        ><ion-toolbar color="secondary">
-          <ion-title class="text-xl"> Password</ion-title>
-        </ion-toolbar></template
-      >
+      <template #header>
+        <ion-header>
+          <ion-toolbar color="secondary">
+            <ion-buttons slot="start">
+              <ion-button @click="$router.go(-1)">
+                <ion-icon :icon="arrowBackOutline" color="light"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+            <ion-title class="text-xl">Change Password</ion-title>
+            <ion-progress-bar
+              type="indeterminate"
+              v-if="isLoading"
+            ></ion-progress-bar></ion-toolbar
+        ></ion-header>
+      </template>
 
       <template #content>
         <div class="bg-rose-50 rounded-lg">
@@ -85,6 +95,7 @@
 <script>
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import {
+  IonButtons,
   IonAvatar,
   IonText,
   IonList,
@@ -102,15 +113,14 @@ import {
   IonButton,
   IonLabel,
   IonTextarea,
+  IonProgressBar,
 } from "@ionic/vue";
 import { defineComponent, ref } from "vue";
 import db from "@/firebase/init.js";
-import { createOutline } from "ionicons/icons";
+import { createOutline, arrowBackOutline } from "ionicons/icons";
 import {
   getAuth,
-  updateEmail,
   updatePassword,
-  updateProfile,
   reauthenticateWithCredential,
   EmailAuthProvider,
 } from "firebase/auth";
@@ -118,6 +128,7 @@ import { doc, updateDoc, getDoc } from "firebase/firestore";
 
 export default defineComponent({
   components: {
+    IonButtons,
     IonAvatar,
     IonText,
     IonIcon,
@@ -136,8 +147,10 @@ export default defineComponent({
     IonLabel,
     IonTextarea,
     BaseLayout,
+    IonProgressBar,
   },
   ionViewDidEnter() {
+    this.isLoading = false;
     this.userData = JSON.parse(localStorage.getItem("user"));
 
     this.user = {
@@ -147,6 +160,8 @@ export default defineComponent({
   },
   data() {
     return {
+      arrowBackOutline,
+      isLoading: false,
       users: [],
       userData: null,
       createOutline,
@@ -174,6 +189,7 @@ export default defineComponent({
       }
     },
     async updateUserCredentials(user) {
+      this.isLoading = true;
       const auth = getAuth();
       const currentUser = auth.currentUser;
 
@@ -210,7 +226,6 @@ export default defineComponent({
           user.currentPassword
         );
         await reauthenticateWithCredential(currentUser, credential);
-        console.log("User re-authenticated successfully.");
 
         const userDocRef = doc(db, "users", currentUser.uid);
         let updateData = {}; // Object to store Firestore updates
@@ -218,7 +233,6 @@ export default defineComponent({
         // Update password if provided
         if (user.password) {
           await updatePassword(currentUser, user.password);
-          console.log("Password updated successfully!");
         }
 
         // Retrieve updated user data from Firestore
@@ -231,9 +245,12 @@ export default defineComponent({
           localStorage.setItem("user", JSON.stringify(updatedUserData));
           console.log("Local storage updated with new user data.");
         }
+        this.$toast("Password updated successfully!", 3000, "success");
+        this.$router.push("/profile");
       } catch (error) {
         console.error("Error updating user details:", error.message);
       }
+      this.isLoading = false;
     },
 
     // async getUser() {

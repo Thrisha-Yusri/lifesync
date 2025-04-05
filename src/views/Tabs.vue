@@ -3,7 +3,7 @@
       <ion-tabs>
         <ion-router-outlet />
         <ion-tab-bar slot="bottom">
-          <ion-tab-button tab="tab1" href="/tabs/home">
+          <ion-tab-button tab="tab1" href="/tabs/">
             <ion-icon :icon="homeOutline" />
             <ion-label>Home</ion-label>
           </ion-tab-button>

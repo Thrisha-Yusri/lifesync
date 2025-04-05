@@ -1,72 +1,65 @@
 <template>
-  <ion-page>
-    <!-- Main Content -->
+  <!-- <ion-page> -->
+  <div
+    class="banner min-h-screen w-full flex flex-col items-center justify-center px-6 bg-cover bg-center bg-no-repeat"
+  >
+    <h1 class="text-white p-10" style="font-size: 60px; font-weight: 800">
+      Hi there!
+    </h1>
+    <p class="text-white text-center" style="font-size: 28px; font-weight: 800">
+      Welcome to Life Sync
+    </p>
+    <form>
+      <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-6 mt-12">
+        <ion-list class="space-y-3">
+          <div class="flex items-center space-x-2">
+            <ion-icon
+              slot="start"
+              :icon="mail"
+              aria-hidden="true"
+              color="primary"
+            ></ion-icon>
+            <ion-input
+              label="Email"
+              type="email"
+              label-placement="floating"
+              fill="solid"
+              placeholder="jack@mail.com"
+              v-model="dataObj.email"
+            ></ion-input>
+          </div>
+          <div class="flex items-center space-x-2">
+            <ion-icon
+              slot="start"
+              :icon="lockClosed"
+              aria-hidden="true"
+              color="primary"
+            ></ion-icon>
+            <ion-input
+              label="Password"
+              type="password"
+              label-placement="floating"
+              fill="outline"
+              placeholder="**********"
+              v-model="dataObj.password"
+            ></ion-input>
+          </div>
 
-    <div
-      class="h-[100vh] w-full flex flex-col items-center justify-center px-6 bg-cover bg-center"
-      style="background-image: url('/assets/background_image.jpg')"
-    >
-      <h1 class="text-white p-10" style="font-size: 60px; font-weight: 800">
-        Hi there!
-      </h1>
-      <p
-        class="text-white text-center"
-        style="font-size: 28px; font-weight: 800"
-      >
-        Welcome to Life Sync
-      </p>
-      <form>
-        <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-6 mt-12">
-          <ion-list class="space-y-3">
-            <div class="flex items-center space-x-2">
-              <ion-icon slot="start" :icon="mail" aria-hidden="true" color="primary"></ion-icon>
-              <ion-input
-                label="Email"
-                type="email"
-                label-placement="floating"
-                fill="solid"
-                placeholder="jack@mail.com"
-                v-model="dataObj.email"
-              ></ion-input>
-            </div>
-            <div class="flex items-center space-x-2">
-              <ion-icon
-                slot="start"
-                :icon="lockClosed"
-                aria-hidden="true"
-                color="primary"
-              ></ion-icon>
-              <ion-input
-                label="Password"
-                type="password"
-                label-placement="floating"
-                fill="outline"
-                placeholder="**********"
-                v-model="dataObj.password"
-              ></ion-input>
-              
-            </div>
+          <ion-button expand="full" class="mt-4" shape="round" @click="login()"
+            >Log In</ion-button
+          >
 
-            <ion-button
-              expand="full"
-              class="mt-4"
-              shape="round"
-              @click="login()"
-              >Log In</ion-button
+          <div class="text-center text-sm mt-4 text-gray-500">
+            Don't have an account?
+            <span class="border-b" @click="$router.push('/signup')"
+              >Register Here!</span
             >
-
-            <div class="text-center text-sm mt-4 text-gray-500">
-              Don't have an account?
-              <span class="border-b" @click="$router.push('/signup')"
-                >Register Here!</span
-              >
-            </div>
-          </ion-list>
-        </div>
-      </form>
-    </div>
-    <!-- </ion-content> -->
-  </ion-page>
+          </div>
+        </ion-list>
+      </div>
+    </form>
+  </div>
+  <!-- </ion-page> -->
 </template>
 
 <script>
@@ -129,7 +122,7 @@ export default defineComponent({
           localStorage.setItem("user", JSON.stringify(doc.data()));
           localStorage.setItem("isLoggedIn", true);
           this.$toast("Successfully logged in!", 3000, "success");
-          this.$router.push("/home");
+          this.$router.push("/");
         } else {
           // doc.data() will be undefined in this case
           console.log("No such document!");
@@ -145,3 +138,15 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+.banner {
+  background-image: url("@/assets/background_image.jpg");
+  height: 100vh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+</style>

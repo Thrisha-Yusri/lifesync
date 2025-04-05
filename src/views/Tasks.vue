@@ -1,14 +1,21 @@
 <template>
   <ion-page>
-    <BaseLayout>
+    <BaseLayout :hideFooter="false">
       <template #header>
-        <ion-toolbar color="light">
-          <ion-title class="text-xl">Life-Sync</ion-title>
-          <ion-progress-bar
+        <ion-header>
+          <ion-toolbar color="light">
+            <ion-buttons slot="start">
+              <ion-button @click="$router.go(-1)">
+                <ion-icon :icon="arrowBackOutline" color="secondary"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+            <ion-title class="text-xl">Life-Sync</ion-title>
+            <ion-progress-bar
             type="indeterminate"
             v-if="isLoading"
           ></ion-progress-bar>
-        </ion-toolbar>
+          </ion-toolbar></ion-header
+        >
       </template>
 
       <template #content>
@@ -176,6 +183,8 @@
 <script>
 import { defineComponent, ref } from "vue";
 import {
+  IonHeader,
+  IonButtons,
   IonAlert,
   IonTabs,
   IonTabBar,
@@ -205,6 +214,7 @@ import {
   eyeOutline,
   trashOutline,
   createOutline,
+  arrowBackOutline,
 } from "ionicons/icons";
 import db from "@/firebase/init.js";
 import {
@@ -220,6 +230,8 @@ import { getAuth } from "firebase/auth";
 
 export default defineComponent({
   components: {
+    IonHeader,
+    IonButtons,
     IonAlert,
     IonTabs,
     IonTabBar,
@@ -259,6 +271,7 @@ export default defineComponent({
       add,
       home,
       folderOpen,
+      arrowBackOutline,
       list,
       person,
       addCircleOutline,

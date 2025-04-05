@@ -1,160 +1,170 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar color="secondary">
-        <ion-title class="text-xl">Reminder</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content color="light">
-      <!-- Card Header -->
-      <ion-card-header class="center-header" v-if="editMode">
-        <ion-card-title class="card-title text-xl p-4"
-          >Event Details</ion-card-title
+    <BaseLayout
+      ><template #header>
+        <ion-header>
+          <ion-toolbar color="secondary">
+            <ion-buttons slot="start">
+              <ion-button @click="$router.go(-1)">
+                <ion-icon :icon="arrowBackOutline" color="light"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+            <ion-title class="text-xl">Reminder</ion-title>
+          </ion-toolbar></ion-header
         >
-      </ion-card-header>
+      </template>
+      <template #content>
+        <ion-content>
+          <!-- Card Header -->
+          <ion-card-header class="center-header" v-if="editMode">
+            <ion-card-title class="card-title text-xl p-4"
+              >Event Details</ion-card-title
+            >
+          </ion-card-header>
 
-      <ion-card-content v-if="editMode">
-        <!-- Reminder Title Input -->
-        <div class="mb-4">
-          <ion-input
-            class="block w-full p-2"
-            label="Title"
-            placeholder="Enter title"
-            label-placement="floating"
-            v-model="dataObj.title"
-          ></ion-input>
-        </div>
-
-        <div class="mb-4">
-          <ion-input
-            class="block w-full p-2"
-            label="With"
-            placeholder="Enter name"
-            label-placement="floating"
-            v-model="dataObj.with"
-          ></ion-input>
-        </div>
-        <div class="mb-4">
-          <ion-input
-            class="block w-full p-2"
-            label="Location"
-            placeholder="Enter location"
-            label-placement="floating"
-            v-model="dataObj.location"
-          ></ion-input>
-        </div>
-
-        <div class="mb-4">
-          <ion-textarea
-            autoGrow
-            label="Description"
-            label-placement="floating"
-            placeholder="Enter description"
-            rows="10"
-            v-model="dataObj.description"
-          ></ion-textarea>
-        </div>
-
-        <div class="border border-gray-300 rounded-lg px-4 py-2 mb-4">
-          <div class="text-gray-500 pb-2 text-xs">Start Date & Time</div>
-          <ion-datetime-button datetime="datetime1"></ion-datetime-button>
-          <ion-modal :keep-contents-mounted="true">
-            <ion-datetime
-              id="datetime1"
-              v-model="dataObj.time.start"
-            ></ion-datetime>
-          </ion-modal>
-        </div>
-
-        <div class="border border-gray-300 rounded-lg px-4 py-2">
-          <div class="text-gray-500 pb-2 text-xs">End Date & Time</div>
-          <ion-datetime-button datetime="datetime2"></ion-datetime-button>
-          <ion-modal :keep-contents-mounted="true">
-            <ion-datetime
-              id="datetime2"
-              v-model="dataObj.time.end"
-            ></ion-datetime>
-          </ion-modal>
-        </div>
-
-        <div class="flex justify-between mt-4">
-          <ion-button
-            fill="solid"
-            color="danger"
-            class="flex-1 mx-1"
-            @click="cancelReminder()"
-            >Cancel</ion-button
-          >
-          <ion-button
-            v-if="!$route.query.id"
-            fill="solid"
-            color="secondary"
-            class="flex-1 mx-1"
-            @click="saverReminder()"
-            >Submit</ion-button
-          >
-          <ion-button
-            v-else
-            fill="solid"
-            color="secondary"
-            class="flex-1 mx-1"
-            @click="editReminder()"
-            >Save</ion-button
-          >
-        </div>
-      </ion-card-content>
-      <ion-card-content v-else>
-        <div class="space-y-3 bg-sky-100 shadow rounded-lg px-4 py-6 mb-4">
-          <div class="flex border-b justify-between font-bold pb-2 text-xl text-cyan-700">
-            <div >Event Details</div>
-            <div class="flex justify-end pb-2 space-x-2">
-              <ion-icon
-                id="present-alert"
-                slot="icon-only"
-                :icon="trashOutline"
-                color="danger"
-              ></ion-icon>
-
-              <ion-icon
-                slot="icon-only"
-                :icon="createOutline"
-                color="secondary"
-                @click="editMode = true"
-              ></ion-icon>
+          <ion-card-content v-if="editMode">
+            <!-- Reminder Title Input -->
+            <div class="mb-4">
+              <ion-input
+                class="block w-full p-2"
+                label="Title"
+                placeholder="Enter title"
+                label-placement="floating"
+                v-model="dataObj.title"
+              ></ion-input>
             </div>
-          </div>
-          <div class="pt-3">
-            <div class="font-bold">Title</div>
-            <div>{{ dataObj.title }}</div>
-          </div>
-          <div>
-            <div class="font-bold">With</div>
-            <div>{{ dataObj.with }}</div>
-          </div>
-          <div>
-            <div class="font-bold">Location</div>
-            <div>{{ dataObj.location }}</div>
-          </div>
-          <div>
-            <div class="font-bold">Description</div>
-            <div>{{ dataObj.description }}</div>
-          </div>
-          <div>
-            <div class="font-bold">Start Date & Time</div>
-            <div>{{ formatDate(dataObj.time.start) }}</div>
-          </div>
-          <div>
-            <div class="font-bold">End Date & Time</div>
-            <div>{{ formatDate(dataObj.time.end) }}</div>
-          </div>
-        </div> </ion-card-content
-      ><ion-alert
-        trigger="present-alert"
-        header="Do you want to delete this event?"
-        :buttons="alertButtons"
-      ></ion-alert>
-    </ion-content>
+
+            <div class="mb-4">
+              <ion-input
+                class="block w-full p-2"
+                label="With"
+                placeholder="Enter name"
+                label-placement="floating"
+                v-model="dataObj.with"
+              ></ion-input>
+            </div>
+            <div class="mb-4">
+              <ion-input
+                class="block w-full p-2"
+                label="Location"
+                placeholder="Enter location"
+                label-placement="floating"
+                v-model="dataObj.location"
+              ></ion-input>
+            </div>
+
+            <div class="mb-4">
+              <ion-textarea
+                autoGrow
+                label="Description"
+                label-placement="floating"
+                placeholder="Enter description"
+                rows="10"
+                v-model="dataObj.description"
+              ></ion-textarea>
+            </div>
+
+            <div class="border border-gray-300 rounded-lg px-4 py-2 mb-4">
+              <div class="text-gray-500 pb-2 text-xs">Start Date & Time</div>
+              <ion-datetime-button datetime="datetime1"></ion-datetime-button>
+              <ion-modal :keep-contents-mounted="true">
+                <ion-datetime
+                  id="datetime1"
+                  v-model="dataObj.time.start"
+                ></ion-datetime>
+              </ion-modal>
+            </div>
+
+            <div class="border border-gray-300 rounded-lg px-4 py-2">
+              <div class="text-gray-500 pb-2 text-xs">End Date & Time</div>
+              <ion-datetime-button datetime="datetime2"></ion-datetime-button>
+              <ion-modal :keep-contents-mounted="true">
+                <ion-datetime
+                  id="datetime2"
+                  v-model="dataObj.time.end"
+                ></ion-datetime>
+              </ion-modal>
+            </div>
+
+            <div class="flex justify-between mt-4">
+              <ion-button
+                fill="solid"
+                color="danger"
+                class="flex-1 mx-1"
+                @click="cancelReminder()"
+                >Cancel</ion-button
+              >
+              <ion-button
+                v-if="!$route.query.id"
+                fill="solid"
+                color="secondary"
+                class="flex-1 mx-1"
+                @click="saverReminder()"
+                >Submit</ion-button
+              >
+              <ion-button
+                v-else
+                fill="solid"
+                color="secondary"
+                class="flex-1 mx-1"
+                @click="editReminder()"
+                >Save</ion-button
+              >
+            </div>
+          </ion-card-content>
+          <ion-card-content v-else>
+            <div class="space-y-3 bg-sky-100 shadow rounded-lg px-4 py-6 mb-4">
+              <div
+                class="flex border-b justify-between font-bold pb-2 text-xl text-cyan-700"
+              >
+                <div>Event Details</div>
+                <div class="flex justify-end pb-2 space-x-2">
+                  <ion-icon
+                    id="present-alert"
+                    slot="icon-only"
+                    :icon="trashOutline"
+                    color="danger"
+                  ></ion-icon>
+
+                  <ion-icon
+                    slot="icon-only"
+                    :icon="createOutline"
+                    color="secondary"
+                    @click="editMode = true"
+                  ></ion-icon>
+                </div>
+              </div>
+              <div class="pt-3">
+                <div class="font-bold">Title</div>
+                <div>{{ dataObj.title }}</div>
+              </div>
+              <div>
+                <div class="font-bold">With</div>
+                <div>{{ dataObj.with }}</div>
+              </div>
+              <div>
+                <div class="font-bold">Location</div>
+                <div>{{ dataObj.location }}</div>
+              </div>
+              <div>
+                <div class="font-bold">Description</div>
+                <div>{{ dataObj.description }}</div>
+              </div>
+              <div>
+                <div class="font-bold">Start Date & Time</div>
+                <div>{{ formatDate(dataObj.time.start) }}</div>
+              </div>
+              <div>
+                <div class="font-bold">End Date & Time</div>
+                <div>{{ formatDate(dataObj.time.end) }}</div>
+              </div>
+            </div> </ion-card-content
+          ><ion-alert
+            trigger="present-alert"
+            header="Do you want to delete this event?"
+            :buttons="alertButtons"
+          ></ion-alert> </ion-content></template
+    ></BaseLayout>
   </ion-page>
 </template>
 
@@ -192,12 +202,14 @@ import {
   IonRow,
   IonCol,
   IonIcon,
+  IonButtons,
 } from "@ionic/vue";
-import { arrowBack, trashOutline, createOutline } from "ionicons/icons";
-
+import { arrowBackOutline, trashOutline, createOutline } from "ionicons/icons";
+import BaseLayout from "@/components/templates/BaseLayout.vue";
 export default {
   components: {
     IonAlert,
+    IonButtons,
     IonDatetimeButton,
     IonModal,
     IonTextarea,
@@ -219,6 +231,7 @@ export default {
     IonRow,
     IonCol,
     IonIcon,
+    BaseLayout,
   },
 
   ionViewDidEnter() {
@@ -241,7 +254,7 @@ export default {
   },
   data() {
     return {
-      arrowBack,
+      arrowBackOutline,
       dataObj: {
         title: "",
         with: "",
@@ -294,7 +307,7 @@ export default {
         await deleteDoc(docRef); // Delete the document
 
         this.$toast("Successfully deleted!", 3000, "success");
-        this.$router.push("/home");
+        this.$router.push("/");
       } catch (error) {
         this.$toast("Failed to delete!", 3000, "danger");
       }
@@ -342,7 +355,7 @@ export default {
         const docRef = await addDoc(colRef, data);
 
         this.$toast("Successfully created!", 3000, "success");
-        this.$router.push("/home");
+        this.$router.push("/");
       } catch (error) {
         console.log(error);
         this.$toast("Error!", 3000, "danger");

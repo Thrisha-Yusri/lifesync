@@ -1,10 +1,21 @@
 <template>
   <ion-page>
-    <BaseLayout
-      ><template #header>
-        <ion-toolbar color="light">
-          <ion-title class="text-xl">Life-Sync</ion-title>
-        </ion-toolbar>
+    <BaseLayout :hideFooter="false">
+      <template #header>
+        <ion-header>
+          <ion-toolbar color="light">
+            <ion-buttons slot="start">
+              <ion-button @click="$router.go(-1)">
+                <ion-icon :icon="arrowBackOutline" color="secondary"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+            <ion-title class="text-xl">Life-Sync</ion-title>
+            <ion-progress-bar
+            type="indeterminate"
+            v-if="isLoading"
+          ></ion-progress-bar>
+          </ion-toolbar></ion-header
+        >
       </template>
 
       <template #content>
@@ -21,24 +32,26 @@
           </div>
         </div>
 
-          <!-- Folder List -->
-          <ion-grid>
-            <ion-row class="gap-5 px-4">
-              <ion-col v-for="folder in folders" :key="folder.id" size="auto">
-                <div
-                  class="relative w-38 h-30 bg-sky-200 rounded-lg shadow-md p-6"
-                >
-                  <div
-                    class="absolute top-0 left-4 w-12 h-4 bg-pink-200 rounded-b-lg"
-                  ></div>
-                  <p class="text-center text-black font-medium text-lg mt-6">
-                    {{ folder.title }}
-                  </p>
-                </div>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        
+        <!-- Folder List -->
+        <div
+          v-for="folder in folders"
+          :key="folder.id"
+          class="border-b border-gray-200 py-2 flex items-center justify-between"
+        >
+          <div class="flex items-center space-x-4">
+            <div class="relative w-15 h-10 bg-sky-200 rounded-lg shadow-md p-6">
+              <div
+                class="absolute top-0 left-4 w-8 h-2 bg-pink-200 rounded-b-lg"
+              ></div>
+              <p class="text-center text-black font-medium text-lg mt-6"></p>
+            </div>
+            <div>{{ folder.title }}</div>
+          </div>
+
+          <div>
+            <ion-icon :icon="chevronForward" color="secondary"></ion-icon>
+          </div>
+        </div>
       </template>
 
       <template #footer>
@@ -74,6 +87,8 @@
 <script>
 import { defineComponent, ref } from "vue";
 import {
+  IonProgressBar,
+  IonButtons,
   IonRouterOutlet,
   IonLabel,
   IonTabButton,
@@ -92,11 +107,21 @@ import {
   IonCardTitle,
 } from "@ionic/vue";
 
-import { addCircleOutline, home, folderOpen, list, person, arrowBack } from "ionicons/icons";
+import {
+  addCircleOutline,
+  home,
+  folderOpen,
+  list,
+  person,
+  arrowBackOutline,
+  chevronForward,
+} from "ionicons/icons";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 
 export default defineComponent({
   components: {
+    IonProgressBar,
+    IonButtons,
     IonRouterOutlet,
     IonLabel,
     IonTabButton,
@@ -130,12 +155,15 @@ export default defineComponent({
       folderOpen,
       list,
       person,
-      arrowBack,
+      arrowBackOutline,
+      chevronForward,
+      isLoading: false,
     };
   },
 
   methods: {
     addfolder() {
+      this.isLoading = true;
       this.$router.push("/folderform");
     },
   },

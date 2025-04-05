@@ -4,8 +4,7 @@
     <ion-content :fullscreen="true" class="p-0 flex flex-col">
       <!-- Top Section: Titles & Gradient Background -->
       <div
-        class="h-[100vh] w-full flex flex-col items-center justify-center px-6 bg-cover bg-center"
-        style="background-image: url('/assets/background_image.jpg')"
+        class="banner min-h-screen w-full flex flex-col items-center justify-center px-6 bg-cover bg-center bg-no-repeat"
       >
         <h1 class="text-white p-10" style="font-size: 60px; font-weight: 800">
           Hi there!
@@ -36,7 +35,12 @@
               ></ion-input>
             </div>
             <div class="flex items-center space-x-2">
-              <ion-icon slot="start" :icon="mail" aria-hidden="true" color="primary"></ion-icon>
+              <ion-icon
+                slot="start"
+                :icon="mail"
+                aria-hidden="true"
+                color="primary"
+              ></ion-icon>
               <ion-input
                 label="Email"
                 type="email"
@@ -70,6 +74,12 @@
               @click="register()"
               >Sign Up</ion-button
             >
+            <div class="text-center text-sm mt-4 text-gray-500">
+              Already have an account?
+              <span class="border-b" @click="$router.push('/login')"
+                >Login Here!</span
+              >
+            </div>
           </ion-list>
         </div>
       </div>
@@ -154,3 +164,15 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+.banner {
+  background-image: url("@/assets/background_image.jpg");
+  height: 100vh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+</style>

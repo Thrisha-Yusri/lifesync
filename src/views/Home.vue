@@ -1,10 +1,10 @@
 <template>
   <ion-page>
     <!-- Main Page Layout -->
-    <BaseLayout>
+    <BaseLayout :hideFooter="false">
       <template #header>
         <ion-toolbar color="light">
-          <ion-title class="text-xl">Life-Sync {{ isLoading }}</ion-title>
+          <ion-title class="text-xl">Life-Sync</ion-title>
           <ion-buttons slot="end">
             <ion-button @click="logout()">
               <ion-icon :icon="logOutOutline" color="primary"></ion-icon>
@@ -29,8 +29,8 @@
             </ion-avatar>
           </div>
           <div class="max-w-3/4">
-            <div class="font-bold">Hello,{{ userData?.name }}</div>
-            <div class="text-xs text-gray-700">{{ userData?.email }}</div>
+            <div class="font-bold text-lg">Hello, {{ userData?.name }}</div>
+            <div class="text-sm text-gray-700">{{ userData?.email }}</div>
           </div>
         </div>
 
@@ -202,7 +202,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import {
   IonAvatar,
   IonRouterOutlet,
@@ -476,17 +476,20 @@ export default defineComponent({
 .line-through {
   text-decoration: line-through;
 }
+
 .custom-modal::part(content) {
-  background: transparent; /* Makes the modal background transparent */
-  box-shadow: none; /* Removes any default shadow */
+  background: transparent;
+  box-shadow: none;
 }
 
 .custom-card {
-  background-color: #f4e8ba; /* Amber-100 */
+  background-color: #f4e8ba;
   padding: 20px;
   border-radius: 12px;
   width: 90%;
   max-width: 400px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+
 </style>

@@ -14,16 +14,16 @@
   "dependencies": {
     "@capacitor/android": "^7.1.0",
     "@capacitor/app": "7.0.0",
-    "@capacitor/core": "^7.1.0",
+    "@capacitor/core": "^7.2.0",
     "@capacitor/haptics": "7.0.0",
     "@capacitor/ios": "^7.1.0",
-    "@capacitor/keyboard": "7.0.0",
+    "@capacitor/keyboard": "^7.0.1",
     "@capacitor/status-bar": "7.0.0",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "@fullcalendar/vue3": "^6.1.15",
-    "@ionic/vue": "^8.0.0",
+    "@ionic/vue": "^8.5.3",
     "@ionic/vue-router": "^8.0.0",
     "@schedule-x/theme-default": "^2.19.0",
     "@schedule-x/vue": "^2.17.0",
@@ -37,7 +37,7 @@
     "vuexfire": "^3.2.5"
   },
   "devDependencies": {
-    "@capacitor/cli": "^7.1.0",
+    "@capacitor/cli": "^7.2.0",
     "@vitejs/plugin-legacy": "^5.0.0",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/eslint-config-typescript": "^12.0.0",

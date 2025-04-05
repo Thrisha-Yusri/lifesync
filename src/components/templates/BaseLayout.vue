@@ -1,16 +1,11 @@
 <template>
   <ion-page>
-    <ion-header >
-      <ion-toolbar v-if="title"
-        ><ion-title> {{ title }} <slot name="titleHeader"></slot></ion-title
-      ></ion-toolbar>
-      <slot name="header"></slot>
-    </ion-header>
-    
-    <ion-content class="ion-padding">
+    <slot name="header"></slot>
+
+    <ion-content :fullscreen="true" :scroll="true" class="ion-padding">
       <slot name="content"></slot>
     </ion-content>
-    <ion-footer>
+    <ion-footer v-if="!hideFooter">
       <ion-toolbar>
         <slot name="footer"></slot>
       </ion-toolbar>
@@ -25,7 +20,9 @@ import {
   IonToolbar,
   IonFooter,
   IonPage,
-  IonInput
+  IonInput,
+  IonBackButton,
+  IonButtons,
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 
@@ -37,13 +34,27 @@ export default defineComponent({
     IonToolbar,
     IonFooter,
     IonPage,
-    IonInput
+    IonInput,
+    IonBackButton,
+    IonButtons,
   },
   props: {
     title: {
       type: String,
       default: "",
     },
+    hideFooter: {
+      type: Boolean,
+      default: true,
+    },
   },
 });
 </script>
+<style>
+.bottom-button {
+  .bottom-button {
+    position: sticky;
+    bottom: 20px;
+  }
+}
+</style>

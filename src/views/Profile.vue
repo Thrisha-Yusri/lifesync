@@ -1,10 +1,17 @@
 <template>
   <ion-page>
-    <BaseLayout>
+    <BaseLayout :hideFooter="false">
       <template #header>
-        <ion-toolbar color="light">
-          <ion-title class="text-xl">Life-Sync</ion-title>
-        </ion-toolbar>
+        <ion-header>
+          <ion-toolbar color="light">
+            <ion-buttons slot="start">
+              <ion-button @click="$router.go(-1)">
+                <ion-icon :icon="arrowBackOutline" color="secondary"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+            <ion-title class="text-xl">Life-Sync</ion-title>
+          </ion-toolbar></ion-header
+        >
       </template>
 
       <template #content>
@@ -38,42 +45,6 @@
           </ion-card-content>
         </ion-card>
 
-        <ion-card-header>
-          <ion-card-title class="card-title p-4">My Members</ion-card-title>
-        </ion-card-header>
-
-        <ion-card-content>
-          <div class="flex items-center space-x-1 mb-4">
-            <ion-input
-              class="flex-1 p-2"
-              label="Member Name"
-              label-placement="floating"
-              placeholder="Enter friend's name"
-            ></ion-input>
-            <ion-icon :icon="addCircleOutline" color="secondary"></ion-icon>
-          </div>
-
-          <ion-list>
-            <ion-item v-for="(member, index) in members" :key="index">
-              <ion-avatar aria-hidden="true" slot="start">
-                <img
-                  alt=""
-                  src="https://ionicframework.com/docs/img/demos/avatar.svg"
-                />
-              </ion-avatar>
-              <ion-label>{{ member.name }}</ion-label>
-              <ion-button
-                fill="clear"
-                color="danger"
-                @click="removeMember(index)"
-              >
-                <ion-icon :icon="trashOutline"></ion-icon>
-              </ion-button>
-            </ion-item>
-          </ion-list>
-        </ion-card-content>
-
-        
       </template>
 
       <template #footer>
@@ -130,6 +101,7 @@ import {
   IonText,
   IonInput,
   IonButton,
+  IonButtons,
 } from "@ionic/vue";
 
 import {
@@ -137,7 +109,7 @@ import {
   folderOpen,
   list,
   person,
-  arrowBack,
+  arrowBackOutline,
   trashOutline,
   addCircleOutline,
 } from "ionicons/icons";
@@ -146,6 +118,7 @@ import BaseLayout from "@/components/templates/BaseLayout.vue";
 export default defineComponent({
   components: {
     IonIcon,
+    IonButtons,
     IonRouterOutlet,
     IonTabs,
     IonTabBar,
@@ -179,24 +152,16 @@ export default defineComponent({
       folderOpen,
       list,
       person,
-      arrowBack,
+      arrowBackOutline,
       userData: null,
-      members: [
-        { name: "Huey" },
-        { name: "Dewey" },
-        { name: "Louie" },
-        { name: "Fooie" },
-      ],
       trashOutline,
       addCircleOutline,
     };
   },
   methods: {
-    removeMember(index) {
-      this.members.splice(index, 1);
-    },
-    changePassword(){
-      this.$router.push('/editprofile')
+   
+    changePassword() {
+      this.$router.push("/editprofile");
     },
   },
 });
