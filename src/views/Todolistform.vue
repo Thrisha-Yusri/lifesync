@@ -1,107 +1,105 @@
 <template>
-  <ion-page>
-    <BaseLayout>
-      <template #header>
-        <ion-header>
-          <ion-toolbar color="secondary">
-            <ion-buttons slot="start">
-              <ion-button @click="$router.go(-1)">
-                <ion-icon :icon="arrowBackOutline" color="light"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-            <ion-title class="text-xl">To-do List</ion-title>
-            <ion-progress-bar
+  <BaseLayout>
+    <template #header>
+      <ion-header>
+        <ion-toolbar color="secondary">
+          <ion-buttons slot="start">
+            <ion-button @click="$router.go(-1)">
+              <ion-icon :icon="arrowBackOutline" color="light"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-title class="text-xl">To-do List</ion-title>
+          <ion-progress-bar
             type="indeterminate"
             v-if="isLoading"
-          ></ion-progress-bar></ion-toolbar></ion-header
-        >
-      </template>
-      <template #content>
-        <ion-content >
-          <ion-card-header>
-            <ion-card-title class="card-title text-lg font-bold p-4"
-              >To-do List Details</ion-card-title
+          ></ion-progress-bar></ion-toolbar
+      ></ion-header>
+    </template>
+    <template #content>
+      <ion-content>
+        <ion-card-header>
+          <ion-card-title class="card-title text-lg font-bold p-4"
+            >To-do List Details</ion-card-title
+          >
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="mb-4">
+            <ion-input
+              v-model="dataObj.title"
+              label="Title"
+              label-placement="floating"
+              placeholder="Enter title"
+              class="w-full p-2 border rounded-md"
+            ></ion-input>
+          </div>
+
+          <div class="mb-4">
+            <ion-input
+              v-model="newTask"
+              label="Task"
+              label-placement="floating"
+              placeholder="Enter a task..."
+              class="w-full"
+            ></ion-input>
+            <div class="flex justify-end pt-2">
+              <ion-icon
+                :icon="addCircleOutline"
+                color="secondary"
+                @click="addTask"
+              ></ion-icon>
+            </div>
+          </div>
+
+          <div>
+            <div class="font-bold text-lg mb-2">Added Tasks</div>
+          </div>
+
+          <ion-list v-if="dataObj.tasks.length > 0">
+            <ion-item v-for="(task, index) in dataObj.tasks" :key="index">
+              <ion-icon :icon="squareOutline" size="small"></ion-icon>
+              <ion-label :class="{ 'line-through': task.completed }"
+                ><span class="pl-2">{{ task.text }}</span></ion-label
+              >
+              <ion-button fill="clear" @click="removeTask(index)">
+                <ion-icon :icon="trashOutline" color="danger" />
+              </ion-button>
+            </ion-item>
+          </ion-list>
+
+          <div class="text-gray-500 italic text-center py-4 text-sm" v-else>
+            No existing list
+          </div>
+
+          <div class="flex justify-between mt-4">
+            <ion-button
+              fill="solid"
+              color="danger"
+              class="flex-1 mx-1"
+              @click="cancelNotes()"
+              >Cancel</ion-button
             >
-          </ion-card-header>
-
-          <ion-card-content>
-            <div class="mb-4">
-              <ion-input
-                v-model="dataObj.title"
-                label="Title"
-                label-placement="floating"
-                placeholder="Enter title"
-                class="w-full p-2 border rounded-md"
-              ></ion-input>
-            </div>
-
-            <div class="mb-4">
-              <ion-input
-                v-model="newTask"
-                label="Task"
-                label-placement="floating"
-                placeholder="Enter a task..."
-                class="w-full"
-              ></ion-input>
-              <div class="flex justify-end pt-2">
-                <ion-icon
-                  :icon="addCircleOutline"
-                  color="secondary"
-                  @click="addTask"
-                ></ion-icon>
-              </div>
-            </div>
-
-            <div>
-              <div class="font-bold text-lg mb-2">Added Tasks</div>
-            </div>
-
-            <ion-list v-if="dataObj.tasks.length > 0">
-              <ion-item v-for="(task, index) in dataObj.tasks" :key="index">
-                <ion-icon :icon="squareOutline" size="small"></ion-icon>
-                <ion-label :class="{ 'line-through': task.completed }"
-                  ><span class="pl-2">{{ task.text }}</span></ion-label
-                >
-                <ion-button fill="clear" @click="removeTask(index)">
-                  <ion-icon :icon="trashOutline" color="danger" />
-                </ion-button>
-              </ion-item>
-            </ion-list>
-
-            <div class="text-gray-500 italic text-center py-4 text-sm" v-else>
-              No existing list
-            </div>
-
-            <div class="flex justify-between mt-4">
-              <ion-button
-                fill="solid"
-                color="danger"
-                class="flex-1 mx-1"
-                @click="cancelNotes()"
-                >Cancel</ion-button
-              >
-              <ion-button
-                v-if="!$route.query.id"
-                fill="solid"
-                color="secondary"
-                class="flex-1 mx-1"
-                @click="saveNotes()"
-                >Submit</ion-button
-              >
-              <ion-button
-                v-else
-                fill="solid"
-                color="secondary"
-                class="flex-1 mx-1"
-                @click="editTasks()"
-                >Save</ion-button
-              >
-            </div>
-          </ion-card-content>
-        </ion-content>
-      </template>
-    </BaseLayout>
-  </ion-page>
+            <ion-button
+              v-if="!$route.query.id"
+              fill="solid"
+              color="secondary"
+              class="flex-1 mx-1"
+              @click="saveNotes()"
+              >Submit</ion-button
+            >
+            <ion-button
+              v-else
+              fill="solid"
+              color="secondary"
+              class="flex-1 mx-1"
+              @click="editTasks()"
+              >Save</ion-button
+            >
+          </div>
+        </ion-card-content>
+      </ion-content>
+    </template>
+  </BaseLayout>
 </template>
 
 <script>
@@ -111,6 +109,7 @@ import { getAuth } from "firebase/auth";
 import { defineComponent, ref } from "vue";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import {
+  IonProgressBar,
   IonButtons,
   IonPage,
   IonButton,
@@ -138,6 +137,7 @@ import {
 
 export default defineComponent({
   components: {
+    IonProgressBar,
     IonButtons,
     IonPage,
     IonContent,
@@ -157,7 +157,7 @@ export default defineComponent({
     IonIcon,
     BaseLayout,
   },
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     this.userData = JSON.parse(localStorage.getItem("user"));
     if (this.$route.query.id) {
       this.getDetails();
@@ -173,6 +173,7 @@ export default defineComponent({
 
   data() {
     return {
+      isLoading: false,
       newTask: "",
       dataObj: {
         title: "",

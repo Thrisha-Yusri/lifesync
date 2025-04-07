@@ -1,5 +1,5 @@
 <template>
-<div>
+<div >
   <Qalendar :events="events" :config="config" />
 </div>
 
@@ -17,7 +17,7 @@ export default {
   props: {
     events: {
       type: Array,
-      required: true,
+      default: [{id:"", title:""}],
     },
   },
 

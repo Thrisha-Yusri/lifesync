@@ -1,5 +1,4 @@
 <template>
-  <ion-page>
     <BaseLayout>
       <template #header>
         <ion-header>
@@ -89,7 +88,6 @@
         </div>
       </template>
     </BaseLayout>
-  </ion-page>
 </template>
 
 <script>
@@ -149,7 +147,7 @@ export default defineComponent({
     BaseLayout,
     IonProgressBar,
   },
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     this.isLoading = false;
     this.userData = JSON.parse(localStorage.getItem("user"));
 
@@ -174,105 +172,7 @@ export default defineComponent({
   },
 
   methods: {
-    async editProfile() {
-      try {
-        const docId = this.$route.query.id; // Get document ID from query params
-        const docRef = doc(db, "user", docId); // Reference to the document
-
-        await updateDoc(docRef, this.dataObj); // Update document with new data
-
-        this.$toast("Successfully Updated!", 3000, "success");
-        this.editMode = false;
-        this.getDetails();
-      } catch (error) {
-        this.$toast("Unsuccessfully Updated!", 3000, "danger");
-      }
-    },
-    async updateUserCredentials(user) {
-      this.isLoading = true;
-      const auth = getAuth();
-      const currentUser = auth.currentUser;
-
-      // Check if user is logged in via localStorage
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (!isLoggedIn) {
-        this.$toast("Please log in first", 3000, "danger");
-        this.$router.push("/login");
-        return;
-      }
-
-      // Get user data from localStorage
-      const storedUser = JSON.parse(localStorage.getItem("user"));
-      if (!storedUser) {
-        this.$toast("User data not found", 3000, "danger");
-        this.$router.push("/login");
-        return;
-      }
-
-      if (!currentUser) {
-        this.$toast(
-          "Authentication error. Please log in again",
-          3000,
-          "danger"
-        );
-        this.$router.push("/login");
-        return;
-      }
-
-      try {
-        // Re-authenticate the user before making any changes
-        const credential = EmailAuthProvider.credential(
-          currentUser.email,
-          user.currentPassword
-        );
-        await reauthenticateWithCredential(currentUser, credential);
-
-        const userDocRef = doc(db, "users", currentUser.uid);
-        let updateData = {}; // Object to store Firestore updates
-
-        // Update password if provided
-        if (user.password) {
-          await updatePassword(currentUser, user.password);
-        }
-
-        // Retrieve updated user data from Firestore
-        const updatedUserDoc = await getDoc(userDocRef);
-        if (updatedUserDoc.exists()) {
-          const updatedUserData = updatedUserDoc.data();
-          console.log("Updated user data from Firestore:", updatedUserData);
-
-          // Update local storage
-          localStorage.setItem("user", JSON.stringify(updatedUserData));
-          console.log("Local storage updated with new user data.");
-        }
-        this.$toast("Password updated successfully!", 3000, "success");
-        this.$router.push("/profile");
-      } catch (error) {
-        console.error("Error updating user details:", error.message);
-      }
-      this.isLoading = false;
-    },
-
-    // async getUser() {
-    //   if (!this.userId) {
-    //     console.error("User ID is missing!");
-    //     return;
-    //   }
-
-    //   const queryRef = query(
-    //     collection(db, "users"),
-    //     where("userId", "==", this.userId)
-    //   );
-
-    //   const docSnap = await getDocs(queryRef);
-
-    //   if (!docSnap.empty) {
-    //     this.userData = docSnap.docs[0].data();
-    //     console.log("User Data:", this.userData);
-    //   } else {
-    //     console.error("No such User!");
-    //   }
-    // },
+   
   },
 });
 </script>

@@ -26,7 +26,7 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-secondary-tint: #41bce2;
 
   /** tertiary **/
-  --ion-color-tertiary: #d4b27f;
+  --ion-color-tertiary: #7db7ff;
   --ion-color-tertiary-rgb: 255, 126, 184;
   --ion-color-tertiary-contrast: rgb(255, 255, 255);
   --ion-color-tertiary-contrast-rgb: 255, 255, 255;
@@ -127,7 +127,8 @@ ion-textarea {
   --color: #ff0404;
 }
 .large-icon {
-  --icon-size: 40px;
+  --icon-size: 150px;
+  --color: #ffffff;
 }
 
 
@@ -149,7 +150,7 @@ html, body {
 /* content */
 .ios ion-content,
 .ios.dark ion-content {
-  --ion-background-color: transparent;
+  --ion-background-color: white;
   --keyboard-offset: env(keyboard-inset-height);
   padding-bottom: env(keyboard-inset-height);
 }

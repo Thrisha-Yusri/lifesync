@@ -1,18 +1,13 @@
 <template>
-  <ion-page>
-    <!-- Main Content -->
-    <ion-content :fullscreen="true" class="p-0 flex flex-col">
-      <!-- Top Section: Titles & Gradient Background -->
+  <BaseLayout hideFooter>
+    <template #content>
       <div
         class="banner min-h-screen w-full flex flex-col items-center justify-center px-6 bg-cover bg-center bg-no-repeat"
       >
         <h1 class="text-white p-10" style="font-size: 60px; font-weight: 800">
           Hi there!
         </h1>
-        <p
-          class="text-white text-center"
-          style="font-size: 28px; font-weight: 800"
-        >
+        <p class="text-white text-center" style="font-size: 28px; font-weight: 800">
           Welcome to Life Sync
         </p>
 
@@ -67,25 +62,22 @@
               ></ion-input>
             </div>
 
-            <ion-button
-              expand="full"
-              class="mt-4"
-              shape="round"
-              @click="register()"
-              >Sign Up</ion-button
-            >
+            <ion-button expand="full" class="mt-4" shape="round" @click="register()">
+              Sign Up
+            </ion-button>
             <div class="text-center text-sm mt-4 text-gray-500">
               Already have an account?
-              <span class="border-b" @click="$router.push('/login')"
-                >Login Here!</span
-              >
+              <span class="border-b" @click="$router.push('/login')">
+                Login Here!
+              </span>
             </div>
-          </ion-list>
+          </ion-list> <!-- Closing tag added here -->
         </div>
       </div>
-    </ion-content>
-  </ion-page>
+    </template>
+  </BaseLayout>
 </template>
+
 
 <script>
 import { defineComponent } from "vue";
@@ -103,6 +95,7 @@ import {
   IonInput,
   IonButton,
 } from "@ionic/vue";
+import BaseLayout from "@/components/templates/BaseLayout.vue";
 export default defineComponent({
   components: {
     IonIcon,
@@ -112,6 +105,7 @@ export default defineComponent({
     IonItem,
     IonInput,
     IonButton,
+    BaseLayout,
   },
   data() {
     return {

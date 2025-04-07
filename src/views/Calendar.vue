@@ -1,5 +1,4 @@
 <template>
-  <ion-page>
     <!-- Main Page Layout -->
     <BaseLayout>
       <template #header>
@@ -36,7 +35,7 @@
         <CustomCalendar :events="events" />
       </template>
     </BaseLayout>
-  </ion-page>
+
 </template>
 <script>
 import { defineComponent, ref } from "vue";
@@ -158,7 +157,7 @@ export default defineComponent({
 
         const updatedData = result.map((item, index) => ({
           ...item,
-          id: index,
+          id: docSnap.docs[index].id,
           time: {
             start: this.formatDate(item.time.start),
             end: this.formatDate(item.time.end),
