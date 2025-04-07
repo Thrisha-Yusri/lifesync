@@ -3,7 +3,9 @@
   <BaseLayout :hideFooter="false">
     <template #header>
       <ion-toolbar color="light">
-        <ion-title class="text-xl">Life-Sync</ion-title>
+        <ion-title class="text-xl flex items-center"
+            ><div class="pt-[25px]">Life-Sync</div></ion-title
+          >
         <ion-buttons slot="end">
           <ion-button @click="logout()">
             <ion-icon :icon="logOutOutline" color="primary"></ion-icon>

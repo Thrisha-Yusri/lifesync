@@ -1,6 +1,8 @@
 <template>
   <ion-page>
-    <slot name="header"></slot>
+  
+      <slot name="header"></slot>
+   
 
     <ion-content :fullscreen="true" :scroll="true" class="ion-padding">
       <slot name="content"></slot>

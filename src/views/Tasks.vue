@@ -8,7 +8,11 @@
               <ion-icon :icon="arrowBackOutline" color="secondary"></ion-icon>
             </ion-button>
           </ion-buttons>
-          <ion-title class="text-xl">Life-Sync</ion-title>
+
+          <ion-title class="text-xl flex items-center"
+            ><div class="pt-[25px]">Life-Sync</div></ion-title
+          >
+
           <ion-progress-bar
             type="indeterminate"
             v-if="isLoading"

@@ -8,7 +8,9 @@
               <ion-icon :icon="arrowBackOutline" color="light"></ion-icon>
             </ion-button>
           </ion-buttons>
-          <ion-title class="text-xl">To-do List</ion-title>
+          <ion-title class="text-xl flex items-center"
+            ><div class="pt-[25px]">To-do List</div></ion-title
+          >
           <ion-progress-bar
             type="indeterminate"
             v-if="isLoading"

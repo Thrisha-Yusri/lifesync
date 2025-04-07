@@ -8,7 +8,9 @@
               <ion-icon :icon="arrowBackOutline" color="light"></ion-icon>
             </ion-button>
           </ion-buttons>
-          <ion-title class="text-xl">Reminder</ion-title>
+          <ion-title class="text-xl flex items-center"
+            ><div class="pt-[25px]">Event</div></ion-title
+          >
         </ion-toolbar>
       </ion-header>
     </template>
