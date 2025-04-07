@@ -14,18 +14,24 @@
     </template>
 
     <template #content>
-
+      <div
+        class="text-center text-indigo-300 pb-10"
+        style="font-size: 30px; font-weight: 600"
+      >
+        <div
+          class="flex justify-center text-indigo-300 border-2 border-indigo-200 rounded-full my-2 mb-10 mt-5"
+        >
+          <ion-icon :icon="infinite" class="large-icon"></ion-icon>
+        </div>
+        Where All Your Digital Life Comes Together
+      </div>
       <!-- Profile Details -->
       <ion-card class="mt-2 bg-white-100">
         <ion-card-content
-          ><div class="flex justify-center">
-            <ion-avatar class="custom-avatar">
-              <img
-                :src="'https://picsum.photos/80/80?random=' + userData?.id"
-                alt="avatar"
-              />
-            </ion-avatar>
-          </div>
+          ><h1 class="text-black" style="font-size: 30px; font-weight: 600">
+            My Profile
+          </h1>
+
           <ion-list>
             <ion-item>
               <ion-label>Name</ion-label>
@@ -168,6 +174,7 @@ import {
   arrowBackOutline,
   trashOutline,
   addCircleOutline,
+  infinite,
 } from "ionicons/icons";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 
@@ -225,6 +232,7 @@ export default defineComponent({
       },
       isLoading: false,
       isChangePasswordModalOpen: false,
+      infinite,
     };
   },
   methods: {
@@ -299,16 +307,20 @@ export default defineComponent({
           localStorage.setItem("user", JSON.stringify(updatedUserData));
           console.log("Local storage updated with new user data.");
         }
-        
+
         // Close modal and reset form
         this.closeChangePasswordModal();
         this.$toast("Password updated successfully!", 3000, "success");
-        
+
         // Refresh the page to show updated data
         window.location.reload();
       } catch (error) {
         console.error("Error updating user details:", error.message);
-        this.$toast("Error updating password: " + error.message, 3000, "danger");
+        this.$toast(
+          "Error updating password: " + error.message,
+          3000,
+          "danger"
+        );
       } finally {
         this.isLoading = false;
       }

@@ -23,9 +23,7 @@
       </div>
       <div class="flex p-4 bg-indigo-200 rounded-lg">
         <div class="max-w-1/4 px-3">
-          <ion-avatar>
-            <img :src="'https://picsum.photos/80/80?random='" alt="avatar" />
-          </ion-avatar>
+          
         </div>
         <div class="max-w-3/4">
           <div class="font-bold text-lg">Hello, {{ userData?.name }}</div>
@@ -279,6 +277,7 @@ import {
   addCircleOutline,
   eyeOutline,
   chevronForward,
+  shuffleOutline,
 } from "ionicons/icons";
 import BaseLayout from "@/components/templates/BaseLayout.vue";
 import CustomCard from "@/components/templates/CustomCard.vue";
@@ -351,6 +350,7 @@ export default defineComponent({
       eyeOutline,
       selectedTask: null,
       router: useRouter(),
+      shuffleOutline,
     };
   },
 

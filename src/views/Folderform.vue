@@ -123,6 +123,7 @@
                   :icon="trashOutline"
                   color="danger"
                   class="trash-icon cursor-pointer ml-2"
+                  @click="removeAttachment(index)"
                 />
               </div>
             </div>
@@ -692,6 +693,30 @@ export default defineComponent({
       } catch (error) {
         console.error("Error saving attachments:", error);
         this.$toast("Error saving attachments!", 3000, "danger");
+      }
+    },
+
+  async removeAttachment(index) {
+      try {
+        if (!this.$route.query.id) {
+          this.$toast("No folder ID found!", 3000, "danger");
+          return;
+        }
+
+        // Remove from local array
+        this.dataObj.attachments.splice(index, 1);
+
+        // Update in database
+        const docRef = doc(db, "folders", this.$route.query.id);
+        await updateDoc(docRef, {
+          attachments: this.dataObj.attachments,
+          updatedAt: new Date(),
+        });
+
+        this.$toast("Attachment deleted successfully!", 3000, "success");
+      } catch (error) {
+        console.error("Error deleting attachment:", error);
+        this.$toast("Error deleting attachment!", 3000, "danger");
       }
     },
     // Save file details (name and URL) to Firestore in 'folders' collection
